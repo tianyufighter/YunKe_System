@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.titos.personalmanagement.dao.UserDao">
+    <resultMap id="BaseResult" type="com.titos.personalmanagement.model.User">
+        <id column="id" property="id" jdbcType="NUMERIC"/>
+        <result column="username" property="username" jdbcType="CHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="person_type" property="personType" jdbcType="INTEGER"/>
+        <result column="head_image" property="headImage" jdbcType="VARCHAR"/>
+        <result column="birthday" property="birthday" jdbcType="DATE"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="registry_time" property="registryTime" jdbcType="DATE"/>
+        <result column="job_title" property="jobTitle" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, username, password, gender, email, person_type, head_image, birthday, phone, registry_time, job_title, description
+    </sql>
+    <sql id="Base_Column_List_Except_PWD">
+        id, username, gender, email, person_type, head_image, birthday, phone, registry_time, job_title, description
+    </sql>
+    <insert id="addNewUser" useGeneratedKeys="true" keyProperty="id">
+        insert into user(username, password, email, person_type, registry_time) values(#{username}, #{password}, #{email}, #{personType}, #{registryTime});
+    </insert>
+    <select id="selectIdDynamic" resultType="java.lang.Integer">
+        select id from user
+        <where>
+            <choose>
+                <when test="username != null and username != ''">
+                    and username=#{username,jdbcType=VARCHAR}
+                </when>
+                <when test="email != null and email != ''">
+                    and email=#{email,jdbcType=VARCHAR}
+                </when>
+            </choose>
+        </where>
+    </select>
+
+    <select id="selectUserToLogin" resultMap="BaseResult">
+        select id, head_image, username, email, person_type, password
+        from user
+        <where>
+            <choose>
+                <when test="email != null and email != ''">
+                    and email = #{email, jdbcType = VARCHAR}
+                </when>
+                <otherwise>
+                    and username = #{username, jdbcType = VARCHAR}
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <update id="updateUserInfoByIdSelective" parameterType="com.titos.personalmanagement.model.User">
+        update user
+        <set>
+            <if test="username != null">
+                username = #{username, jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password, jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null">
+                gender = #{gender, jdbcType=CHAR},
+            </if>
+            <if test="email != null">
+                email = #{email, jdbcType=VARCHAR},
+            </if>
+            <if test="headImage != null">
+                head_image = #{headImage, jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday, jdbcType=DATE},
+            </if>
+            <if test="phone != null">
+                phone = #{phone, jdbcType=VARCHAR},
+            </if>
+            <if test="jobTitle != null">
+                job_title = #{jobTitle, jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description, jdbcType=VARCHAR }
+            </if>
+        </set>
+        where id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <select id="selectUserInfoById" resultMap="BaseResult">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where id = #{id, jdbcType=INTEGER}
+    </select>
+    <select id="selectUserForUpdate" resultMap="BaseResult">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where id = #{id, jdbcType = INTEGER} and
+              username = #{username, jdbcType = VARCHAR} and
+              email = #{email, jdbcType = VARCHAR};
+    </select>
+    <select id="getSystemUserCount" resultType="Integer">
+        select
+            count(*)
+        from
+            user;
+    </select>
+</mapper>

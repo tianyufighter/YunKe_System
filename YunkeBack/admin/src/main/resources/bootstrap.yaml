@@ -1,0 +1,19 @@
+server:
+  port: 8001
+spring:
+  application:
+    name: Admin
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 106.55.105.183:8848 # Nacos服务注册中心地址
+        cluster-name: DEFAULT # 集群名称，这里默认使用DEFAULT
+        namespace: 429e859c-afe9-44c8-88bf-877fecf201bd # 命名空间(dev环境)
+        group: YUNKE_GROUP # 组名
+      config:
+        server-addr: 106.55.105.183:8848 # Nacos作为配置中心地址
+        file-extension: yaml # 指定yaml格式的配置
+        namespace: 429e859c-afe9-44c8-88bf-877fecf201bd # 命名空间(dev环境)
+        group: YUNKE_GROUP # 组名
+  profiles:
+    active: dev # 在nacos的config中表示命名中的${spring-profiles.active}

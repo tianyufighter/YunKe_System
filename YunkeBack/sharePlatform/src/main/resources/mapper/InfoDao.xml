@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.titos.shareplatform.dao.InfoDao">
+
+    <select id="listInfo" resultType="com.titos.info.shareplatform.vo.InfoVO">
+        SELECT i.id, i.info_cover, i.info_title, i.info_content, i.user_id, u.username, u.email, i.type, i.create_time
+        FROM info i
+        LEFT JOIN user u ON i.user_id = u.id
+        <where>
+            i.is_violation = 0
+            <if test="filterInfo.startTime != null">
+                AND i.create_time > #{filterInfo.startTime}
+            </if>
+            <if test="filterInfo.endTime != null">
+                AND i.create_time &lt;= #{filterInfo.endTime}
+            </if>
+            <if test="filterInfo.type != null">
+                AND i.type = #{filterInfo.type}
+            </if>
+            <if test="filterInfo.matchTitle != null">
+                AND i.info_title like concat('%',#{filterInfo.matchTitle},'%')
+            </if>
+        </where>
+        ORDER BY i.create_time
+        <if test="!filterInfo.isEarliest">
+            DESC
+        </if>
+        LIMIT #{pageNum}, #{pageSize}
+    </select>
+    <select id="listInfoTotal" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM info i
+        LEFT JOIN user u ON i.user_id = u.id
+        <where>
+            i.is_violation = 0
+            <if test="filterInfo.startTime != null">
+                AND i.create_time > #{filterInfo.startTime}
+            </if>
+            <if test="filterInfo.endTime != null">
+                AND i.create_time &lt;= #{filterInfo.endTime}
+            </if>
+            <if test="filterInfo.type != null">
+                AND i.type = #{filterInfo.type}
+            </if>
+        </where>
+        ORDER BY i.create_time DESC
+    </select>
+
+</mapper>
