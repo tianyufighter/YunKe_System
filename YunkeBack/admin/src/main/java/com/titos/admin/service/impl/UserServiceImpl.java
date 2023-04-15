@@ -3,6 +3,7 @@ package com.titos.admin.service.impl;
 import cn.hutool.core.convert.Convert;
 import com.github.pagehelper.PageInfo;
 import com.titos.admin.config.YkSysConf;
+import com.titos.admin.service.ConfigService;
 import com.titos.admin.service.UserService;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
@@ -18,6 +19,7 @@ import com.titos.tool.check.VerifyStringUtil;
 import com.titos.tool.token.CustomStatement;
 import com.titos.tool.token.TokenContent;
 import com.titos.tool.token.TokenUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private UserServiceClient userServiceClient;
     @Resource
     private NormalServiceClient normalServiceClient;
+    @Resource
+    private ConfigService configService;
     @Resource
     private YkSysConf ykSysConf;
     @Override
@@ -121,6 +125,8 @@ public class UserServiceImpl implements UserService {
                 return new CommonResult<>(StatusEnum.AUTHORITY_LACK.getCode(), "你无权登录系统，请联系管理员");
             } else if (Boolean.TRUE.equals(user.getIsBan())) {
                 return new CommonResult<>(StatusEnum.AUTHORITY_LACK.getCode(),  "你处于封禁状态，无法登录，请联系管理员");
+            } else if (validateLoginUsername(user.getUsername())) {
+                return new CommonResult<>(StatusEnum.ACCOUNT_DISABLE.getCode(), "你处于系统黑名单中，无法登录，请联系管理员");
             } else {
                 BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
                 // 如果存在该用户
@@ -196,5 +202,24 @@ public class UserServiceImpl implements UserService {
         userVO.setEmail(email);
         Integer userId = (Integer) userServiceClient.queryUserIdDynamic(userVO).getData();
         return userId != null;
+    }
+
+    /**
+     * 校验登录的用户的用户名是否在黑名单中
+     * @return
+     */
+    private Boolean validateLoginUsername(String username) {
+        // 用户名黑名单校验
+        String blackStr = configService.selectBlockUsernameList();
+        if (StringUtils.isEmpty(blackStr) || StringUtils.isEmpty(username)) {
+            return  false;
+        }
+        String[] blackUsernameList = blackStr.split(";");
+        for (String backUsername : blackUsernameList) {
+            if (backUsername.equals(username)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -25,7 +25,7 @@ public class SysCache {
     /**
      * 缓存内容
      */
-    private String cacheValue = "";
+    private Object cacheValue = "";
     /**
      * 备注
      */
@@ -35,7 +35,7 @@ public class SysCache {
         this.cacheName = cacheName;
         this.remark = remark;
     }
-    public SysCache(String cacheName, String cacheKey, String cacheValue)
+    public SysCache(String cacheName, String cacheKey, Object cacheValue)
     {
         this.cacheName = StringUtils.replace(cacheName, ":", "");
         this.cacheKey = StringUtils.replace(cacheKey, cacheName, "");

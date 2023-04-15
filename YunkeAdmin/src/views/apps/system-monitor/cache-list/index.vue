@@ -222,12 +222,20 @@ export default {
     },
     /** 键名前缀去除 */
     keyFormatter(cacheKey) {
-      return cacheKey.replace(this.nowCacheName, "");
+      if (this.nowCacheName.includes(":")) {
+        return cacheKey.replace(this.nowCacheName, "");
+      } else {
+        return cacheKey;
+      }
     },
     /** 查询缓存内容详细 */
     handleCacheValue(cacheKey) {
       getCacheValue(this.nowCacheName, cacheKey).then(response => {
         this.cacheForm = response.data.data;
+        if (this.cacheForm.cacheKey == "") {
+          this.cacheForm.cacheKey = this.cacheForm.cacheName;
+        }
+        this.cacheForm.cacheValue = JSON.stringify(response.data.data.cacheValue);
       });
     },
     /** 清理全部缓存 */

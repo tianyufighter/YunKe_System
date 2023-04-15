@@ -41,7 +41,7 @@
     </select>
 
     <select id="selectUserByNameOrEmail" resultMap="BaseResult">
-        select id, head_image, username, email, person_type, password
+        select id, head_image, username, email, person_type, password, is_ban
         from user
         <where>
             <choose>

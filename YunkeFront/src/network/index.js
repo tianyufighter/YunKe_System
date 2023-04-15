@@ -11,7 +11,13 @@ export function doLogin(datas, redisKey) {
     }
   })
 }
-
+// 获取是否开启验证码功能
+export function getCaptchaEnabled() {
+  return request({
+    url: "/personManagement/isCaptchaEnabled",
+    method: 'get'
+  })
+}
 // 获取验证码
 export function getCaptcha() {
   return request({

@@ -15,6 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface PersonService {
     /**
+     * 是否开启验证码功能
+     * @return
+     */
+    boolean isCaptchaEnabled();
+    /**
      * 注册用户
      * @param registerVO
      * @param redisKey 存放验证码的key

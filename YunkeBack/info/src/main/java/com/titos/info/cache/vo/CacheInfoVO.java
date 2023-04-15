@@ -27,4 +27,15 @@ public class CacheInfoVO {
      * 设置时间的类型，如TimeUnit.MINUTES
      */
     private TimeUnit timeUnit;
+
+    public CacheInfoVO(Object obj, Long timeout, TimeUnit timeUnit) {
+        this.obj = obj;
+        this.timeout = timeout;
+        this.timeUnit = timeUnit;
+    }
+
+    /**
+     * 存储时键的前缀, 默认为空串
+     */
+    private String prefixKey = "";
 }

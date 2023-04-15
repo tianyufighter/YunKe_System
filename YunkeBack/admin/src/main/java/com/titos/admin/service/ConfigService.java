@@ -31,6 +31,18 @@ public interface ConfigService {
     Boolean selectCaptchaEnabled();
 
     /**
+     * 获取邮箱验证开关
+     * @return
+     */
+    Boolean selectEmailValidateEnabled();
+
+    /**
+     * 获取用户登录黑名单
+     * @return
+     */
+    String selectBlockUsernameList();
+
+    /**
      * 查询参数配置列表
      * @param config 参数配置信息
      * @return 参数配置集合

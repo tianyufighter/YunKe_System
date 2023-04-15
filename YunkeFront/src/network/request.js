@@ -1,6 +1,7 @@
 import axios from 'axios'
 import Vue from "vue";
 import {Message} from "element-ui";
+import router from "@/router";
 
 // 全局默认配置
 let baseURL='/api'
@@ -72,7 +73,6 @@ export default function request(config) {
     }
   }, (error) => {
     Vue.prototype.$vs.loading.close();
-    this.$router.push("/pages/error-500");
     let {message} = error;
     if (message == "Network Error") {
       message = "后端接口连接异常";
@@ -80,6 +80,8 @@ export default function request(config) {
       message = "系统接口请求超时";
     } else if (message.includes("Request failed with status code")) {
       message = "系统接口" + message.substr(message.length - 3) + "异常";
+      router.push("/pages/error-500");
+      return Promise.reject(error);
     }
     // Message({message: message, type: 'error', duration: 5 * 1000})
     Vue.prototype.$vs.notify({

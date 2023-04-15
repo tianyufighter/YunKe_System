@@ -180,6 +180,22 @@ public class RedisCache
     }
 
     /**
+     * 获取缓存的zset
+     * @param key
+     * @param sortType 0表示从小到大， 1表示从大到小
+     * @return
+     * @param <T>
+     */
+    public <T> Set<T> getCacheZset(final String key, final Integer sortType) {
+        if (sortType == 0) {
+            return redisTemplate.opsForZSet().range(key, 0, -1);
+        } else {
+            return redisTemplate.opsForZSet().reverseRange(key, 0, -1);
+        }
+    }
+
+
+    /**
      * 缓存Map
      *
      * @param key

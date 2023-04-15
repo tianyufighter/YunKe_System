@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 @Data
 @RefreshScope
 public class YkSysConf {
-    @Value("${YK.sys-conf.enable-mail-register}")
-    private Boolean enableMailRegister;
     @Value("${YK.sys-conf.front-end-url}")
     private String frontEndUrl;
     @Value("${YK.sys-conf.mail-sender}")

@@ -130,6 +130,15 @@ public class PersonController {
     }
 
     /**
+     * 获取是否开启了验证码功能
+     * @return
+     */
+    @GetMapping("/isCaptchaEnabled")
+    public CommonResult getIsCaptchaEnabled() {
+        return CommonResult.success(personService.isCaptchaEnabled());
+    }
+
+    /**
      * 生成验证码
      * @param request
      * @param response
@@ -143,7 +152,7 @@ public class PersonController {
             // 生成验证码字符串
             String code = defaultKaptcha.createText();
             // 存储在redis中的key
-            String key = (String) normalServiceClient.cacheInfo(new CacheInfoVO(code, 2L, TimeUnit.MINUTES)).getData();
+            String key = (String) normalServiceClient.cacheInfo(new CacheInfoVO(code, 2L, TimeUnit.MINUTES, CacheConstants.CAPTCHA_CODE_KEY)).getData();
             BufferedImage image = defaultKaptcha.createImage(code);
             ImageIO.write(image, "jpg", outputStream);
             byte[] bytes = outputStream.toByteArray();

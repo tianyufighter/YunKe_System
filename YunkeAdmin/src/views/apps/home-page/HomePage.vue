@@ -15,13 +15,13 @@
               size="mini"
               icon="el-icon-cloudy"
               plain
-              @click="goTarget('https://gitee.com/y_project/RuoYi-Vue')"
-          >访问码云</el-button>
+              @click="goTarget('https://github.com/tianyufighter/GraduationProject')"
+          >访问github</el-button>
           <el-button
               size="mini"
               icon="el-icon-s-home"
               plain
-              @click="goTarget('http://ruoyi.vip')"
+              @click="goTarget('http://www.tianyufighter.cn')"
           >访问前台</el-button>
           <el-button
             size="medium"
@@ -94,6 +94,9 @@ export default {
           color:'danger',
           position:'top-center'})
       })
+    },
+    goTarget(href) {
+      window.open(href, "_blank");
     }
   },
   created() {

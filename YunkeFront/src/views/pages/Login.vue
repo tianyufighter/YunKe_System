@@ -39,7 +39,7 @@
                           v-model="password"
                           class="w-full mt-6 no-icon-border" />
                       <span class="text-danger text-sm" v-show="errors.has('password')">密码不能为空(至少8位)</span>
-                      <div class="flex flex-wrap justify-between">
+                      <div class="flex flex-wrap justify-between" v-if="isCaptchaEnabled">
                         <!--验证码输入框-->
                         <vs-input
                             data-vv-validate-on="blur"
@@ -73,8 +73,7 @@
 </template>
 
 <script>
-import {getCaptcha} from "../../network";
-import {doLogin} from "../../network";
+import {doLogin, getCaptchaEnabled, getCaptcha} from "../../network";
 export default {
     data() {
         return {
@@ -83,25 +82,37 @@ export default {
             verifyCode: '', // 用户输入的验证码
             imgUrl: '', // 验证码的url地址
             checkbox_remember_me: false,
-            key: '' // redis中存储验证码的key
+            key: '', // redis中存储验证码的key
+            isCaptchaEnabled: false // 是否开启验证码
         }
     },
     created() {
-      // 获取验证码
-      getCaptcha().then(res => {
-        // 获取响应头中的redis—key
-        if (res.headers['redis-key']) {
-          this.key = res.headers['redis-key'];
+      getCaptchaEnabled().then(res => {
+        if (res.data.data == true) {
+          // 获取验证码
+          getCaptcha().then(res => {
+            this.isCaptchaEnabled = true;
+            // 获取响应头中的redis—key
+            if (res.headers['redis-key']) {
+              this.key = res.headers['redis-key'];
+            }
+            let blob = new Blob([res.data], {type: 'image/jpeg'})
+            this.imgUrl = window.URL.createObjectURL(blob)
+          }).catch(err => {
+            console.log(err)
+          })
         }
-        let blob = new Blob([res.data], {type: 'image/jpeg'})
-        this.imgUrl = window.URL.createObjectURL(blob)
       }).catch(err => {
         console.log(err)
       })
     },
     computed: {
           validateForm() {
+            if (this.isCaptchaEnabled) {
               return !this.errors.any() && this.username !== '' && this.password !== '' && this.verifyCode !== '';
+            } else {
+              return !this.errors.any() && this.username !== '' && this.password !== '';
+            }
           },
     },
     mounted() {

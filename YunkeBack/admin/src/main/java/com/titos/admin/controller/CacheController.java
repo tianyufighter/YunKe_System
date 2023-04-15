@@ -4,6 +4,7 @@ import com.titos.admin.model.SysCache;
 import com.titos.admin.model.server.Sys;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.constant.CacheConstants;
+import com.titos.tool.cache.redis.RedisCache;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,15 +25,18 @@ import java.util.*;
 public class CacheController {
     @Resource
     private RedisTemplate<String, String> redisTemplate;
+    @Resource
+    private RedisCache redisCache;
     private final static List<SysCache> caches = new ArrayList<>();
     {
-        caches.add(new SysCache(CacheConstants.LOGIN_TOKEN_KEY, "用户信息"));
-        caches.add(new SysCache(CacheConstants.SYS_CONFIG_KEY, "配置信息"));
-        caches.add(new SysCache(CacheConstants.SYS_DICT_KEY, "数据字典"));
+        caches.add(new SysCache(CacheConstants.ONLINE_PEOPLE_COUNT, "在线人数"));
+        caches.add(new SysCache(CacheConstants.REGISTER_CACHE_USER_KEY, "注册缓存用户"));
+        caches.add(new SysCache(CacheConstants.RESET_PASSWORD_CACHE_USER_KEY, "重置密码缓存用户"));
         caches.add(new SysCache(CacheConstants.CAPTCHA_CODE_KEY, "验证码"));
-        caches.add(new SysCache(CacheConstants.REPEAT_SUBMIT_KEY, "防重提交"));
-        caches.add(new SysCache(CacheConstants.RATE_LIMIT_KEY, "限流处理"));
-        caches.add(new SysCache(CacheConstants.PWD_ERR_CNT_KEY, "秘密错误次数"));
+        caches.add(new SysCache(CacheConstants.SYS_CONFIG_KEY, "配置信息"));
+        caches.add(new SysCache(CacheConstants.ACTIVE, "活跃达人"));
+        caches.add(new SysCache(CacheConstants.LIKE_PREFIX, "点赞用户"));
+        caches.add(new SysCache(CacheConstants.LIKE_COUNT, "点赞次数"));
     }
 
     @GetMapping()
@@ -65,7 +69,14 @@ public class CacheController {
     }
     @GetMapping("/getValue")
     public CommonResult getCacheValue(@RequestParam("cacheName") String cacheName, @RequestParam("cacheKey") String cacheKey) {
-        String cacheValue = redisTemplate.opsForValue().get(cacheKey);
+        Object cacheValue = null;
+        if (CacheConstants.LIKE_PREFIX.equals(cacheName)) {
+            cacheValue = redisCache.getCacheSet(cacheKey);
+        } else if (CacheConstants.ACTIVE.equals(cacheName) || CacheConstants.LIKE_COUNT.equals(cacheName)) {
+            cacheValue = redisCache.getCacheZset(cacheKey, 1);
+        } else {
+            cacheValue = redisCache.getCacheObject(cacheKey);
+        }
         SysCache sysCache = new SysCache(cacheName, cacheKey, cacheValue);
         return CommonResult.success(sysCache);
     }

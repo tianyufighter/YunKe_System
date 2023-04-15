@@ -5,6 +5,7 @@ import com.titos.info.cache.vo.CacheInfoVO;
 import com.titos.info.exception.ParameterException;
 import com.titos.info.file.FileInfo;
 import com.titos.info.global.CommonResult;
+import com.titos.info.global.constant.CacheConstants;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.log.model.LoginLog;
 import com.titos.info.personmanagement.vo.LoginSuccessVO;
@@ -17,8 +18,10 @@ import com.titos.personmanagement.factory.UserFactory;
 import com.titos.personmanagement.mail.MailHandler;
 import com.titos.personmanagement.service.PersonService;
 import com.titos.personmanagement.vo.*;
+import com.titos.rpc.clients.AdminServiceClient;
 import com.titos.rpc.clients.NormalServiceClient;
 import com.titos.rpc.clients.UserServiceClient;
+import com.titos.tool.check.VerifyPasswordUtil;
 import com.titos.tool.check.VerifyStringUtil;
 import com.titos.tool.token.CustomStatement;
 import com.titos.tool.token.TokenContent;
@@ -37,13 +40,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -64,6 +60,14 @@ public class PersonServiceImpl implements PersonService {
     @Resource
     private MailHandler mailHandler;
 
+    @Resource
+    private AdminServiceClient adminServiceClient;
+
+    @Override
+    public boolean isCaptchaEnabled() {
+        return Convert.convert(Boolean.class, adminServiceClient.getCaptchaEnabled().getData());
+    }
+
     @Override
     public CommonResult register(RegisterVO registerVO, String redisKey) {
         // 验证验证码是否正确
@@ -79,9 +83,9 @@ public class PersonServiceImpl implements PersonService {
             return res.get();
         }
         // 如果开启了邮箱注册
-        if (ykSysConf.getEnableMailRegister()) {
+        if (Convert.convert(Boolean.class, adminServiceClient.getEmailValidateEnabled().getData())) {
             // 将用户数据暂时存储到redis
-            String key = (String) normalServiceClient.cacheInfo(new CacheInfoVO(user, 30L, TimeUnit.MINUTES)).getData();
+            String key = (String) normalServiceClient.cacheInfo(new CacheInfoVO(user, 30L, TimeUnit.MINUTES, CacheConstants.REGISTER_CACHE_USER_KEY)).getData();
 
             boolean isSuccess = mailHandler.sendAccountVerify(user, key);
             if (isSuccess) {
@@ -139,7 +143,6 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public CommonResult<LoginSuccessVO> login(LoginVO loginVO, String redisKey) {
-
         CommonResult commonResult = checkVerifyCode(redisKey, loginVO.getVerifyCode());
         if (!StatusEnum.SUCCESS.getCode().equals(commonResult.getCode())) {
             return commonResult;
@@ -150,6 +153,9 @@ public class PersonServiceImpl implements PersonService {
             if (Boolean.TRUE.equals(user.getIsBan())) {
                 recordLoginLog(user.getUsername(), "Error", "账号处于封禁状态");
                 return new CommonResult<>(StatusEnum.ACCOUNT_DISABLE.getCode(), "你处于封禁状态，无法登录，请联系管理员");
+            } else if (validateLoginUsername(user.getUsername())) {
+                recordLoginLog(user.getUsername(), "Error", "账号位于黑名单");
+                return new CommonResult<>(StatusEnum.ACCOUNT_DISABLE.getCode(), "你处于系统黑名单中，无法登录，请联系管理员");
             } else {
                 BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
                 // 如果存在该用户
@@ -270,14 +276,13 @@ public class PersonServiceImpl implements PersonService {
      * @return 如果返回的对象不为空，则表明不符合指定要求，反之则满足条件
      */
     private Optional<CommonResult> verifyUser(User user) {
-//        // 密码不符合要求
-//        if (!VerifyPasswordUtil.isPwdStrong(user.getPassword())) {
-//            return Optional.of(new CommonResult(StatusEnum.PASSWORD_IS_NOT_STRONG.getCode(), "密码强度不足"));
-//        } else {
-//            // 验证用户名和邮箱是否已经存在
-//            return verifyRepeat(user.getUsername(), user.getEmail());
-//        }
-        return verifyRepeat(user.getUsername(), user.getEmail());
+        // 密码不符合要求
+        if (!VerifyPasswordUtil.isPwdStrong(user.getPassword())) {
+            return Optional.of(new CommonResult(StatusEnum.PASSWORD_IS_NOT_STRONG.getCode(), "密码强度不足"));
+        } else {
+            // 验证用户名和邮箱是否已经存在
+            return verifyRepeat(user.getUsername(), user.getEmail());
+        }
     }
 
     /**
@@ -305,15 +310,20 @@ public class PersonServiceImpl implements PersonService {
      * @return 验证的结果
      */
     private CommonResult checkVerifyCode(String redisKey, String verifyCode) {
-        // 获取redis中的验证码
-        String code = (String) normalServiceClient.getInfoByKey(redisKey).getData();
-        if (code == null) {
-            return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码过期");
-        }
-        if (code.equalsIgnoreCase(verifyCode)) {
-            return CommonResult.success("验证成功");
+        Boolean captchaEnabled = Convert.convert(Boolean.class, adminServiceClient.getCaptchaEnabled().getData());
+        if (captchaEnabled) {
+            // 获取redis中的验证码
+            String code = (String) normalServiceClient.getInfoByKey(redisKey).getData();
+            if (code == null) {
+                return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码过期");
+            }
+            if (code.equalsIgnoreCase(verifyCode)) {
+                return CommonResult.success("验证成功");
+            } else {
+                return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码错误");
+            }
         } else {
-            return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码错误");
+            return CommonResult.success("无需验证");
         }
     }
 
@@ -332,7 +342,7 @@ public class PersonServiceImpl implements PersonService {
             return CommonResult.fail("邮箱账号错误");
         }
         // 将用户数据暂时存储到redis
-        String key = (String) normalServiceClient.cacheInfo(new CacheInfoVO(user, 30L, TimeUnit.MINUTES)).getData();
+        String key = (String) normalServiceClient.cacheInfo(new CacheInfoVO(user, 30L, TimeUnit.MINUTES, CacheConstants.RESET_PASSWORD_CACHE_USER_KEY)).getData();
         boolean isSuccess = mailHandler.sendResetPasswordVerify(user, key);
         if (isSuccess) {
             return new CommonResult(StatusEnum.SUCCESS.getCode(), "发送重置密码邮件成功");
@@ -378,6 +388,25 @@ public class PersonServiceImpl implements PersonService {
     public int getAllUserNum() {
         Integer count = (Integer) userServiceClient.querySystemUserCount().getData();
         return count;
+    }
+
+    /**
+     * 校验登录的用户的用户名是否在黑名单中
+     * @return
+     */
+    private Boolean validateLoginUsername(String username) {
+        // 用户名黑名单校验
+        String blackStr = Convert.convert(String.class, adminServiceClient.getBlockUsernameList().getData());
+        if (StringUtils.isEmpty(blackStr) || StringUtils.isEmpty(username)) {
+            return  false;
+        }
+        String[] blackUsernameList = blackStr.split(";");
+        for (String backUsername : blackUsernameList) {
+            if (backUsername.equals(username)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

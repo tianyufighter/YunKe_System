@@ -1,5 +1,6 @@
 package com.titos.personmanagement;
 
+import com.titos.rpc.clients.AdminServiceClient;
 import com.titos.rpc.clients.NormalServiceClient;
 import com.titos.rpc.clients.UserServiceClient;
 import com.titos.rpc.config.DefaultFeignConfiguration;
@@ -10,7 +11,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableFeignClients(clients = {UserServiceClient.class, NormalServiceClient.class}, defaultConfiguration = DefaultFeignConfiguration.class)
+@EnableFeignClients(clients = {UserServiceClient.class, NormalServiceClient.class, AdminServiceClient.class}, defaultConfiguration = DefaultFeignConfiguration.class)
 @EnableDiscoveryClient
 @EnableYunKeAutoUtils
 public class PersonManagementApplication {

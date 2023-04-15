@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.titos.info.global.CommonResult;
+import com.titos.info.global.constant.CacheConstants;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.post.vo.IdListVO;
 import com.titos.info.post.vo.PostNumVO;
@@ -18,7 +19,6 @@ import com.titos.shareplatform.dao.PostDao;
 import com.titos.shareplatform.dto.CommentDTO;
 import com.titos.shareplatform.model.Likes;
 import com.titos.info.post.model.Post;
-import com.titos.shareplatform.pojo.RedisKeyConst;
 import com.titos.shareplatform.service.PostService;
 import com.titos.shareplatform.vo.*;
 import com.titos.tool.utils.BeanCopyUtils;
@@ -87,10 +87,10 @@ public class PostServiceImpl implements PostService {
             User poster = Convert.convert(User.class, userServiceClient.queryUserById(postVO.getUserId()).getData());
             postVO.setUser(poster);
             // 从redis中获取该帖子的点赞量
-            Double likesCount = redisTemplate.opsForZSet().score(RedisKeyConst.LIKE_COUNT, postVO.getId());
+            Double likesCount = redisTemplate.opsForZSet().score(CacheConstants.LIKE_COUNT, postVO.getId());
             postVO.setLikes(likesCount == null ? 0 : likesCount.intValue());
             // 从redis中获取点赞该帖子的用户id
-            Set<Object> userIds = redisTemplate.opsForSet().members(RedisKeyConst.LIKE_PREFIX + postVO.getId());
+            Set<Object> userIds = redisTemplate.opsForSet().members(CacheConstants.LIKE_PREFIX + postVO.getId());
             if (userIds != null) {
                 List<User> likesUser = new ArrayList<>(userIds.size());
                 userIds.forEach(userId -> {
@@ -101,7 +101,7 @@ public class PostServiceImpl implements PostService {
                 postVO.setLikesUser(likesUser);
             }
             // 从redis当中获取用户是否点赞该帖子
-            Boolean isLike = redisTemplate.opsForSet().isMember(RedisKeyConst.LIKE_PREFIX + postVO.getId(), customStatement.getId());
+            Boolean isLike = redisTemplate.opsForSet().isMember(CacheConstants.LIKE_PREFIX + postVO.getId(), customStatement.getId());
             postVO.setIsLike(isLike);
 
             // 获取该帖子对应的所有评论信息
@@ -125,7 +125,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public CommonResult<List<ActiveVO>> listActive(Long pageNum, Long pageSize) {
-        Set<ZSetOperations.TypedTuple<Object>> tupleSet = redisTemplate.opsForZSet().reverseRangeWithScores(RedisKeyConst.ACTIVE, (pageNum - 1) * pageSize, pageNum * pageSize - 1);
+        Set<ZSetOperations.TypedTuple<Object>> tupleSet = redisTemplate.opsForZSet().reverseRangeWithScores(CacheConstants.ACTIVE, (pageNum - 1) * pageSize, pageNum * pageSize - 1);
         if (tupleSet == null) {
             return CommonResult.success(null);
         }
@@ -162,7 +162,7 @@ public class PostServiceImpl implements PostService {
         postDao.insertPost(post);
         // 根据用户id获取用户信息
         User user = Convert.convert(User.class, userServiceClient.queryUserById(customStatement.getId()).getData());
-        redisTemplate.opsForZSet().incrementScore(RedisKeyConst.ACTIVE, JSON.toJSONString(user), 1.0D);
+        redisTemplate.opsForZSet().incrementScore(CacheConstants.ACTIVE, JSON.toJSONString(user), 1.0D);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -186,15 +186,15 @@ public class PostServiceImpl implements PostService {
     public void savePostLike(CustomStatement customStatement, LikesVO likesVO) {
         Integer userId = customStatement.getId();
         Integer postId = likesVO.getPostId();
-        if (Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(RedisKeyConst.LIKE_PREFIX + postId, userId))) {
+        if (Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(CacheConstants.LIKE_PREFIX + postId, userId))) {
             // 若点赞了则取消点赞，并对帖子的点赞量-1
-            redisTemplate.opsForSet().remove(RedisKeyConst.LIKE_PREFIX + postId, userId);
-            redisTemplate.opsForZSet().incrementScore(RedisKeyConst.LIKE_COUNT, postId, -1D);
+            redisTemplate.opsForSet().remove(CacheConstants.LIKE_PREFIX + postId, userId);
+            redisTemplate.opsForZSet().incrementScore(CacheConstants.LIKE_COUNT, postId, -1D);
             likesDao.deleteLikesByUserIdAndPostId(userId, postId);
         } else {
             // 若未点赞则点赞，并对对应的帖子的点赞量+1
-            redisTemplate.opsForSet().add(RedisKeyConst.LIKE_PREFIX + postId, userId);
-            redisTemplate.opsForZSet().incrementScore(RedisKeyConst.LIKE_COUNT, postId, 1D);
+            redisTemplate.opsForSet().add(CacheConstants.LIKE_PREFIX + postId, userId);
+            redisTemplate.opsForZSet().incrementScore(CacheConstants.LIKE_COUNT, postId, 1D);
             likesDao.insertLikes(Likes.builder()
                     .userId(userId)
                     .postId(postId)

@@ -31,6 +31,10 @@ public class DefaultFeignConfiguration {
         return new NormalServiceClientFallbackFactory();
     }
     @Bean
+    public AdminServiceClientFallbackFactory adminServiceClientFallbackFactory() {
+        return new AdminServiceClientFallbackFactory();
+    }
+    @Bean
     public SharePlatformServiceClientFallbackFactory sharePlatformServiceClientFallbackFactory() {
         return new SharePlatformServiceClientFallbackFactory();
     }

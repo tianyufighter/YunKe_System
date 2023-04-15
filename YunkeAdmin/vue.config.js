@@ -10,6 +10,7 @@ module.exports = {
       '/api': { // 这个要与request.js文件中的baseURL值对应
         // 真正去请求数据的地址
         target: "http://39.108.117.49:80/api",
+        // target: "http://localhost:8010",
         // 是否跨域
         changeOrigin: true,
         // 重写路径

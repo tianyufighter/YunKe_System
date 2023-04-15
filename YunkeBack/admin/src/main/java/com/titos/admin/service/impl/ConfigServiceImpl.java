@@ -84,6 +84,29 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     /**
+     * 获取邮箱验证开关
+     * @return true开启， false关闭
+     */
+    @Override
+    public Boolean selectEmailValidateEnabled() {
+        String emailValidateEnabled = selectConfigByKey("sys.account.emailValidate");
+        if (StringUtils.isEmpty(emailValidateEnabled)) {
+            return true;
+        }
+        return Convert.toBool(emailValidateEnabled);
+    }
+
+    /**
+     * 获取用户登录的黑名单
+     * @return
+     */
+    @Override
+    public String selectBlockUsernameList() {
+        String blockUsernameList = selectConfigByKey("sys.login.blockUsernameList");
+        return blockUsernameList;
+    }
+
+    /**
      * 查询参数配置列表
      * @param config 参数配置信息
      * @return 参数配置集合

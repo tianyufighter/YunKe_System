@@ -25,6 +25,32 @@ public class ConfigController {
     private ConfigService configService;
     @Resource
     private ConfigDao configDao;
+    /**
+     * 获取是否开启验证码功能
+     */
+    @GetMapping("/isCaptchaEnabled")
+    public CommonResult getCaptchaEnabled() {
+        Boolean res = configService.selectCaptchaEnabled();
+        return CommonResult.success(res);
+    }
+
+    /**
+     * 获取是否开启邮箱验证功能
+     */
+    @GetMapping("/isEmailValidateEnabled")
+    public CommonResult getEmailValidateEnabled() {
+        Boolean res = configService.selectEmailValidateEnabled();
+        return CommonResult.success(res);
+    }
+    /**
+     * 获取用户登录黑名
+     */
+    @GetMapping("/blockUsernameList")
+    public CommonResult getBlockUsernameList() {
+        String res = configService.selectBlockUsernameList();
+        return CommonResult.success(res);
+    }
+
 
     /**
      * 获取参数配置列表

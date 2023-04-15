@@ -19,9 +19,10 @@ public class InfoCacheImpl implements InfoCache {
     @Override
     public String cacheInfo(CacheInfoVO cacheInfoVO) {
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        redisTemplate.opsForValue().set(uuid, cacheInfoVO.getObj());
-        redisTemplate.expire(uuid, cacheInfoVO.getTimeout(), cacheInfoVO.getTimeUnit());
-        return uuid;
+        String key = cacheInfoVO.getPrefixKey() + uuid;
+        redisTemplate.opsForValue().set(key, cacheInfoVO.getObj());
+        redisTemplate.expire(key, cacheInfoVO.getTimeout(), cacheInfoVO.getTimeUnit());
+        return key;
     }
 
     @Override

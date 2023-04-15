@@ -50,7 +50,7 @@ public class TokenCheckFilter implements GlobalFilter, Ordered {
     /**
      * 制定好放行的路径
      */
-    public static final List<String> ALLOW_URL = Arrays.asList("/personManagement/signUp", "/personManagement/verifyEmail", "/personManagement/login", "/personManagement/verifyCode", "/admin/user/login", "/common/file/upload", "/personManagement/resetPassword", "/personManagement/verifyResetPassword");
+    public static final List<String> ALLOW_URL = Arrays.asList("/personManagement/signUp", "/personManagement/verifyEmail", "/personManagement/login", "/personManagement/verifyCode", "/personManagement/isCaptchaEnabled", "/admin/user/login", "/common/file/upload", "/personManagement/resetPassword", "/personManagement/verifyResetPassword");
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         /*

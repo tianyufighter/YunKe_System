@@ -62,7 +62,7 @@
                                         class="w-full mt-6" />
                                     <span class="text-danger text-sm" v-show="errors.has('confirm_password')">确认密码要求输入</span>
 
-                                    <div class="flex flex-wrap justify-between">
+                                    <div class="flex flex-wrap justify-between" v-if="isCaptchaEnabled">
                                         <!--验证码输入框-->
                                         <vs-input
                                             data-vv-validate-on="blur"
@@ -94,18 +94,25 @@
 </template>
 
 <script>
-import {getCaptcha} from "../../network";
+import {getCaptcha, getCaptchaEnabled} from "../../network";
 import {doRegister} from "../../network";
 
 export default {
     created() {
-      getCaptcha().then(res => {
-        // 获取响应头中的redis—key
-        if (res.headers['redis-key']) {
-          this.key = res.headers['redis-key'];
+      getCaptchaEnabled().then(res => {
+        if (res.data.data == true) {
+          getCaptcha().then(res => {
+            this.isCaptchaEnabled = true;
+            // 获取响应头中的redis—key
+            if (res.headers['redis-key']) {
+              this.key = res.headers['redis-key'];
+            }
+            let blob = new Blob([res.data], {type: 'image/jpeg'})
+            this.imgUrl = window.URL.createObjectURL(blob)
+          }).catch(err => {
+            console.log(err)
+          })
         }
-        let blob = new Blob([res.data], {type: 'image/jpeg'})
-        this.imgUrl = window.URL.createObjectURL(blob)
       }).catch(err => {
         console.log(err)
       })
@@ -119,12 +126,17 @@ export default {
             isTermsConditionAccepted: false,
             verifyCode: '', // 用户输入的验证码
             imgUrl: '', // 验证码的url地址
-            key: '' // redis中存储验证码的key
+            key: '', // redis中存储验证码的key
+            isCaptchaEnabled: false // 是否开启验证码
         }
     },
     computed: {
         validateForm() {
+          if (this.isCaptchaEnabled) {
             return !this.errors.any() && this.username != '' && this.email != '' && this.password != '' && this.confirm_password != '' && this.verifyCode != '' && this.isTermsConditionAccepted === true;
+          } else {
+            return !this.errors.any() && this.username != '' && this.email != '' && this.password != '' && this.confirm_password != '' && this.isTermsConditionAccepted === true;
+          }
         }
     },
     methods: {

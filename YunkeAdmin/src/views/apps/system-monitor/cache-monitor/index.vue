@@ -88,6 +88,7 @@ export default {
     /** 查缓存询信息 */
     getList() {
       getCache().then((response) => {
+        console.log("缓存数据: ", response)
         this.cache = response.data.data;
         this.$modal.closeLoading();
 
@@ -104,7 +105,7 @@ export default {
               roseType: "radius",
               radius: [15, 95],
               center: ["50%", "38%"],
-              data: response.data.commandStats,
+              data: this.cache.commandStats,
               animationEasing: "cubicInOut",
               animationDuration: 1000,
             }
