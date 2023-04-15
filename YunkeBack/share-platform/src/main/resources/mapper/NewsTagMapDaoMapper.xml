@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.titos.shareplatform.dao.NewsTagMapDao">
+    <resultMap id="BaseResult" type="com.titos.shareplatform.model.NewsTagMap">
+        <id column="id" property="id" jdbcType="NUMERIC"/>
+        <result column="news_id" property="newsId" jdbcType="INTEGER"/>
+        <result column="tag_id" property="tagId" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, news_id, tag_id
+    </sql>
+    <select id="selectNewsIdByTagId" resultType="Integer">
+        select news_id from news_tag_map where tag_id = #{tagId}
+    </select>
+    <select id="selectTagIdByNewsId" resultType="Integer">
+        select tag_id from news_tag_map where news_id = #{newsId}
+    </select>
+    <delete id="deleteNewsTagMapById">
+        delete from news_tag_map where news_id in
+        <foreach collection="newsIds" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+    <delete id="deleteNewsTagMapByNewsTagMap">
+        delete from news_tag_map where news_id = #{newsId} and tag_id = #{tagId}
+    </delete>
+    <insert id="insertNewsTagMap">
+        insert into news_tag_map(news_id, tag_id) values(#{newsId}, #{tagId})
+    </insert>
+</mapper>

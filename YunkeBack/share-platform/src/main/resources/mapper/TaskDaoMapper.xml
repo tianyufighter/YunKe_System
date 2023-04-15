@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.titos.shareplatform.dao.TaskDao">
+    <resultMap id="BaseResult" type="com.titos.shareplatform.model.Task">
+        <id column="id" property="id" jdbcType="NUMERIC"/>
+        <result column="task_title" property="taskTitle" jdbcType="VARCHAR"/>
+        <result column="task_desc" property="taskDesc" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="is_important" property="isImportant" jdbcType="INTEGER"/>
+        <result column="is_starred" property="isStarred" jdbcType="INTEGER"/>
+        <result column="is_done" property="isDone" jdbcType="INTEGER"/>
+        <result column="is_trashed" property="isTrashed" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, task_title, task_desc, user_id, is_important, is_starred, is_done, is_trashed, create_time
+    </sql>
+    <select id="selectAllTaskByUserIdDESC" resultMap="BaseResult">
+        select <include refid="Base_Column_List"/> from task where user_id = #{userId} order by create_time desc
+    </select>
+    <select id="selectAllTaskByIdDESC" resultMap="BaseResult">
+        select <include refid="Base_Column_List"/> from task where id = #{id} order by create_time desc
+    </select>
+    <insert id="insertTask" useGeneratedKeys="true" keyProperty="id">
+        insert into task(task_title, task_desc, user_id, is_important, is_starred, is_done, is_trashed, create_time)
+        values(#{taskTitle}, #{taskDesc}, #{userId}, #{isImportant}, #{isStarred}, #{isDone}, #{isTrashed}, #{createTime});
+    </insert>
+    <select id="listTaskByUserIdAndTagName" resultType="com.titos.shareplatform.vo.TaskVO">
+        select <include refid="Base_Column_List"/> from task where user_id = #{userId} and tag
+    </select>
+    <select id="selectAllTaskDynamic" resultMap="BaseResult">
+        select <include refid="Base_Column_List"/> from task
+        <where>
+            <choose>
+                <when test="keywords == 'starred'">
+                    is_starred = 1
+                </when>
+                <when test="keywords == 'important'">
+                    is_important = 1
+                </when>
+                <when test="keywords == 'done'">
+                    is_done = 1
+                </when>
+                <when test="keywords == 'trashed">
+                    is_trashed = 1
+                </when>
+            </choose>
+        </where>
+                and user_id = #{userId}
+    </select>
+    <update id="updateTaskById" parameterType="com.titos.shareplatform.model.Task">
+        update task
+        <set>
+            <if test="taskTitle != null">
+                task_title = #{taskTitle},
+            </if>
+            <if test="taskDesc != null">
+                task_desc = #{taskDesc},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="isImportant != null">
+                is_important = #{isImportant},
+            </if>
+            <if test="isStarred != null">
+                is_starred = #{isStarred},
+            </if>
+            <if test="isDone != null">
+                is_done = #{isDone},
+            </if>
+            <if test="isTrashed != null">
+                is_trashed = #{isTrashed},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="selectIdByUserId">
+        select id from task where user_id = #{userId}
+    </select>
+    <delete id="deleteTaskBatch">
+        delete from task where id in
+        <foreach collection="ids" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>
