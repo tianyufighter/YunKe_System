@@ -1,0 +1,18 @@
+server:
+  port: 8007
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.titos.technicalarchive
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+# 指定sentinel-dashboard控制台的连接地址
+spring:
+  cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:8080

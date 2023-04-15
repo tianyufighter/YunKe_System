@@ -1,0 +1,8 @@
+server:
+  port: 8005
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.titos.conversation
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 写接口的全限定名 -->
+<mapper namespace="com.titos.conversation.dao.ContactPersonDao">
+    <resultMap id="BaseResult" type="com.titos.conversation.model.ContactPerson">
+        <id column="id" property="id" jdbcType="NUMERIC"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="friend_id" property="friendId" jdbcType="INTEGER"/>
+        <result column="message_id" property="messageId" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, friend_id, message_id
+    </sql>
+    <insert id="insertFriend">
+        insert into contactperson(user_id, friend_id)
+        values(#{sendId}, #{receiveId})
+    </insert>
+
+    <delete id="deleteFriend">
+        delete from contactperson
+        where  (user_id = #{sendId} and friend_id = #{receiveId})
+           or (friend_id = #{sendId} and user_id = #{receiveId})
+    </delete>
+
+    <select id="selectIsFriend" resultType="int">
+        select count(*) from contactperson
+        where (user_id = #{sendId} and friend_id = #{receiveId})
+            or (friend_id = #{sendId} and user_id = #{receiveId})
+    </select>
+
+    <update id="updateMessageLatest">
+        update contactperson set message_id = #{messageId}
+        where (user_id = #{userId} and friend_id = #{friendId})
+           or (friend_id = #{userId} and user_id = #{friendId})
+    </update>
+</mapper>

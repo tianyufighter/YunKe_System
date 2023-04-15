@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.titos.shareplatform.dao.CalendarTagDao">
+    <resultMap id="BaseResult" type="com.titos.shareplatform.model.CalendarTag">
+        <id column="id" property="id" jdbcType="NUMERIC"/>
+        <result column="calendar_id" property="calendarId" jdbcType="INTEGER"/>
+        <result column="tag_id" property="tagId" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, calendar_id, tag_id
+    </sql>
+    <select id="selectTagIdByCalendarId" resultType="Integer">
+        select tag_id from calendar_tag where calendar_id = #{calendarId}
+    </select>
+    <select id="selectIdsByCalendarId" resultType="Integer">
+        select id from calendar_tag where calendar_id in
+        <foreach collection="calendarIds" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+    <delete id="deleteCalendarTagByIdBatch">
+        delete from calendar_tag where id in
+        <foreach collection="ids" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+    <insert id="insertCalendarTag">
+        insert into calendar_tag(calendar_id, tag_id) values(#{calendarId}, #{tagId});
+    </insert>
+</mapper>
