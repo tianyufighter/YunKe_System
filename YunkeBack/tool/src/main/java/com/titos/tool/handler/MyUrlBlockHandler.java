@@ -42,6 +42,9 @@ public class MyUrlBlockHandler implements BlockExceptionHandler {
         } else if (ex instanceof AuthorityException) {
             // 授权异常
             errorMsg = CommonResult.fail(StatusEnum.SENTINEL_AUTHORITY_EXCEPTION.getCode(),StatusEnum.SENTINEL_AUTHORITY_EXCEPTION.getMsg());
+        } else {
+            // sentinel未知异常
+            errorMsg = CommonResult.fail(StatusEnum.SENTINEL_UNKNOWN_EXCEPTION.getCode(), StatusEnum.SENTINEL_UNKNOWN_EXCEPTION.getMsg());
         }
         httpServletResponse.setStatus(500);
         httpServletResponse.setCharacterEncoding("utf-8");

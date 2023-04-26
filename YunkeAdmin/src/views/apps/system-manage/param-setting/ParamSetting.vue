@@ -32,6 +32,7 @@
               <b-button
                 variant="primary"
                 @click="showModal"
+                v-if="userData.role == 3"
               >
                 <span class="text-nowrap">新增参数</span>
               </b-button>
@@ -69,14 +70,18 @@
               />
             </template>
 
-            <b-dropdown-item  @click="showModal(data.item)">
+            <b-dropdown-item  @click="showModal(data.item)" v-if="userData.role == 3">
               <feather-icon icon="EditIcon" />
               <span class="align-middle ml-50">编辑</span>
             </b-dropdown-item>
 
-            <b-dropdown-item @click="clickDelete(data.item)">
+            <b-dropdown-item @click="clickDelete(data.item)" v-if="userData.role == 3">
               <feather-icon icon="TrashIcon" />
               <span class="align-middle ml-50">删除</span>
+            </b-dropdown-item>
+
+            <b-dropdown-item v-if="userData.role != 3">
+              <span class="align-middle text-warning">无权限操作</span>
             </b-dropdown-item>
           </b-dropdown>
         </template>
@@ -240,6 +245,7 @@ export default {
   },
   data() {
     return {
+      userData: JSON.parse(localStorage.getItem('userData')),
       selectedSystemInner: 'yes',
       statusOptions: [
         { label: '是', value: 'Y' },

@@ -18,6 +18,7 @@ public enum StatusEnum {
     SENTINEL_PARAMFLOW_EXCEPTION(102, "热点异常"),
     SENTINEL_SYSTEM_EXCEPTION(103, "系统异常"),
     SENTINEL_AUTHORITY_EXCEPTION(104, "授权异常"),
+    SENTINEL_UNKNOWN_EXCEPTION(105, "未知异常"),
     /**
      * 成功
      */
