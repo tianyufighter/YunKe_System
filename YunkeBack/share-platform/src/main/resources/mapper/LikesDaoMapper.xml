@@ -11,11 +11,11 @@
         id, user_id, post_id, create_time
     </sql>
     <insert id="insertLikes" parameterType="com.titos.shareplatform.model.Likes">
-        insert into likes(user_id, post_id, create_time) values(#{userId}, #{postId}, #{createTime});
+        insert into likes(user_id, post_id, create_time) values(#{userId}, #{postId}, sysdate());
     </insert>
-    <select id="selectUserIdByPostId" resultType="Integer">
+    <select id="selectUserIdByPostId" resultType="java.lang.Integer">
         select
-        <include refid="Base_Column_List"/>
+        user_id
         from likes
         where id = #{id, jdbcType=INTEGER}
     </select>
@@ -25,8 +25,30 @@
     <delete id="deleteLikesByUserIdAndPostId">
         delete from likes where user_id = #{userId} and post_id = #{postId}
     </delete>
+    <delete id="deleteLikesByPostId" parameterType="java.lang.Integer">
+        delete from likes where post_id = #{postId}
+    </delete>
     <select id="selectTimeByRecentPeriod" resultType="java.time.LocalDateTime">
         select create_time
             from likes where (create_time between #{startDate} and #{endDate}) and (user_id = #{userId})
+    </select>
+    <select id="selectLikesByCondition" resultType="com.titos.shareplatform.model.Likes"
+            parameterType="com.titos.shareplatform.model.Likes">
+        select <include refid="Base_Column_List"/>
+        from likes
+        <where>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="postId != null">
+                AND post_id = #{postId}
+            </if>
+            <if test="createTime != null">
+                AND create_time = #{createTime}
+            </if>
+        </where>
     </select>
 </mapper>

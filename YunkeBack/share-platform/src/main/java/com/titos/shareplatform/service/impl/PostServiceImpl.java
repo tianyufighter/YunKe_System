@@ -4,11 +4,13 @@ import cn.hutool.core.convert.Convert;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.titos.info.comment.dto.CommentDTO;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.constant.CacheConstants;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.post.vo.IdListVO;
 import com.titos.info.post.vo.PostNumVO;
+import com.titos.info.post.vo.PostVO;
 import com.titos.info.user.model.User;
 import com.titos.rpc.clients.NormalServiceClient;
 import com.titos.rpc.clients.UserServiceClient;
@@ -16,7 +18,6 @@ import com.titos.shareplatform.async.ServiceAsync;
 import com.titos.shareplatform.dao.CommentDao;
 import com.titos.shareplatform.dao.LikesDao;
 import com.titos.shareplatform.dao.PostDao;
-import com.titos.shareplatform.dto.CommentDTO;
 import com.titos.shareplatform.model.Likes;
 import com.titos.info.post.model.Post;
 import com.titos.shareplatform.service.PostService;
@@ -80,9 +81,12 @@ public class PostServiceImpl implements PostService {
     public CommonResult<PageInfo<PostVO>> queryPostsByPage(CustomStatement customStatement, int pageNum, int pageSize) {
         // 分页查询(紧随跟在其后的第一条查询sql将会被分页)
         PageHelper.startPage(pageNum, pageSize);
-        // 查询全部
-        List<PostVO> postList = postDao.selectAllPostByDESC();
-        for (PostVO postVO: postList) {
+        PostNumVO postNumVO = new PostNumVO();
+        postNumVO.setIsViolation(false);
+        List<Post> postList = postDao.selectPostByConditionDESC(postNumVO);
+        PageInfo pageInfo = new PageInfo(postList);
+        List<PostVO> postVOList = BeanCopyUtils.copyList(postList, PostVO.class);
+        for (PostVO postVO: postVOList) {
             // 根据用户id获取用户信息
             User poster = Convert.convert(User.class, userServiceClient.queryUserById(postVO.getUserId()).getData());
             postVO.setUser(poster);
@@ -114,7 +118,8 @@ public class PostServiceImpl implements PostService {
             postVO.setCommentList(commentList);
             postVO.setCommentBox("");
         }
-        return CommonResult.success(new PageInfo<>(postList));
+        pageInfo.setList(postVOList);
+        return CommonResult.success(pageInfo);
     }
 
     @Override
@@ -133,7 +138,8 @@ public class PostServiceImpl implements PostService {
         // 用户的排名
         long rank = 0;
         for (ZSetOperations.TypedTuple<Object> sub : tupleSet) {
-            User user = JSON.parseObject((String) sub.getValue(), User.class);
+            Integer userId = JSON.parseObject((String) sub.getValue(), Integer.class);
+            User user = Convert.convert(User.class, userServiceClient.queryUserById(userId).getData());
             if (user != null) {
                 activeVOList.add(ActiveVO.builder()
                         .rank(++rank)
@@ -161,8 +167,8 @@ public class PostServiceImpl implements PostService {
         post.setIsViolation(false);
         postDao.insertPost(post);
         // 根据用户id获取用户信息
-        User user = Convert.convert(User.class, userServiceClient.queryUserById(customStatement.getId()).getData());
-        redisTemplate.opsForZSet().incrementScore(CacheConstants.ACTIVE, JSON.toJSONString(user), 1.0D);
+//        User user = Convert.convert(User.class, userServiceClient.queryUserById(customStatement.getId()).getData());
+        redisTemplate.opsForZSet().incrementScore(CacheConstants.ACTIVE, JSON.toJSONString(customStatement.getId()), 1.0D);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -186,7 +192,7 @@ public class PostServiceImpl implements PostService {
     public void savePostLike(CustomStatement customStatement, LikesVO likesVO) {
         Integer userId = customStatement.getId();
         Integer postId = likesVO.getPostId();
-        if (Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(CacheConstants.LIKE_PREFIX + postId, userId))) {
+        if (isLike(postId, userId)) {
             // 若点赞了则取消点赞，并对帖子的点赞量-1
             redisTemplate.opsForSet().remove(CacheConstants.LIKE_PREFIX + postId, userId);
             redisTemplate.opsForZSet().incrementScore(CacheConstants.LIKE_COUNT, postId, -1D);
@@ -232,10 +238,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public CommonResult<PageInfo<Post>> queryPostByCondition(PostNumVO postNumVO) {
+    public CommonResult<PageInfo<PostVO>> queryPostByCondition(PostNumVO postNumVO) {
         PageHelper.startPage(postNumVO.getPageNum(), postNumVO.getPageSize());
-        List<Post> postList = postDao.selectPostByCondition(postNumVO);
-        return CommonResult.success(new PageInfo<>(postList));
+        List<Post> postList = postDao.selectPostByConditionDESC(postNumVO);
+        PageInfo pageInfo = new PageInfo(postList);
+        List<PostVO> postVOList = BeanCopyUtils.copyList(postList, PostVO.class);
+        // 根据帖子id获取对应的博客发布者的名称
+        for (PostVO postVO : postVOList) {
+            // 根据用户id查询用户信息
+            User user = Convert.convert(User.class, userServiceClient.queryUserById(postVO.getUserId()).getData());
+            postVO.setUser(user);
+        }
+        pageInfo.setList(postVOList);
+        return CommonResult.success(pageInfo);
     }
 
     @Override
@@ -245,9 +260,51 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Integer deletePostBatch(IdListVO idListVO) {
+        for (Integer postId : idListVO.getIdList()) {
+            // 根据帖子的id获取用户id
+            Post post = postDao.selectPostByPostId(postId);
+            try {
+                Double score = redisTemplate.opsForZSet().incrementScore(CacheConstants.ACTIVE, JSON.toJSONString(post.getUserId()), -1.0D);
+                if (score != null && score == 0) {
+                    redisTemplate.opsForZSet().remove(CacheConstants.ACTIVE, JSON.toJSONString(post.getUserId()));
+                }
+                // 删除该帖子的点赞信息
+                redisTemplate.delete(CacheConstants.LIKE_PREFIX + post.getId());
+                redisTemplate.opsForZSet().remove(CacheConstants.LIKE_COUNT, postId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            likesDao.deleteLikesByPostId(postId);
+            // 删除该帖子的评论信息
+            commentDao.deleteCommentByPostId(postId);
+        }
         Integer res = postDao.deletePostBatchById(idListVO.getIdList());
-        // TODO: 将排行中对应的数据要减少
         log.info("删除帖子完成");
         return res;
+    }
+
+    /**
+     * 判断帖子是否被某个用户点赞
+     *
+     * @param postId 帖子ID
+     * @param userId 用户ID
+     * @return 该用户是否点赞该帖子
+     */
+    private Boolean isLike(Integer postId, Integer userId) {
+        if (redisTemplate.opsForSet().isMember(CacheConstants.LIKE_PREFIX + postId, userId)) {
+            return true;
+        } else {
+            Likes likes = new Likes();
+            likes.setUserId(userId);
+            likes.setPostId(postId);
+            List<Likes> likesList = likesDao.selectLikesByCondition(likes);
+            if (likesList == null || likesList.size() == 0) {
+                return false;
+            } else {
+                redisTemplate.opsForSet().add(CacheConstants.LIKE_PREFIX + postId, userId);
+                redisTemplate.opsForZSet().incrementScore(CacheConstants.LIKE_COUNT, postId, 1D);
+                return true;
+            }
+        }
     }
 }

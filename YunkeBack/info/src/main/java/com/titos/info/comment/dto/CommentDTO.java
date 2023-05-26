@@ -1,4 +1,4 @@
-package com.titos.shareplatform.dto;
+package com.titos.info.comment.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

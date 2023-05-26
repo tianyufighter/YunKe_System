@@ -6,6 +6,7 @@ import com.titos.info.global.CommonResult;
 import com.titos.info.post.model.Post;
 import com.titos.info.post.vo.IdListVO;
 import com.titos.info.post.vo.PostNumVO;
+import com.titos.info.post.vo.PostVO;
 import com.titos.shareplatform.vo.*;
 import com.titos.tool.token.CustomStatement;
 
@@ -76,7 +77,7 @@ public interface PostService {
      * @param postNumVO 封装的帖子信息
      * @return 查询的结果
      */
-    CommonResult<PageInfo<Post>> queryPostByCondition(PostNumVO postNumVO);
+    CommonResult<PageInfo<PostVO>> queryPostByCondition(PostNumVO postNumVO);
 
     /**
      * 更新帖子信息

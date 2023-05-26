@@ -26,8 +26,8 @@ public class BlogController {
      * @return
      */
     @PostMapping("/getBlogByCondition")
-    public CommonResult<PageInfo<Blog>> queryBlogByCondition(@RequestBody BlogVO blogVO) {
-        PageInfo<Blog> pageInfo = blogService.queryBlogByCondition(blogVO);
+    public CommonResult<PageInfo<BlogVO>> queryBlogByCondition(@RequestBody BlogVO blogVO) {
+        PageInfo<BlogVO> pageInfo = blogService.queryBlogByCondition(blogVO);
         return CommonResult.success(pageInfo);
     }
     @PostMapping("/updateBlog")

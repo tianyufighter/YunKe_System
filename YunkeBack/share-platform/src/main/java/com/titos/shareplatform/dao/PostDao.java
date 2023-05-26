@@ -2,7 +2,7 @@ package com.titos.shareplatform.dao;
 
 import com.titos.info.post.model.Post;
 import com.titos.info.post.vo.PostNumVO;
-import com.titos.shareplatform.vo.PostVO;
+import com.titos.info.post.vo.PostVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -72,9 +72,9 @@ public interface PostDao {
     void updateComments(@Param("postId") Integer postId, @Param("count") Integer count);
 
     /**
-     * 按条件查询帖子信息
-     * @param postNumVO 帖子信息
+     * 逆序按条件查询帖子信息
+     * @param postNumVO
      * @return
      */
-    List<Post> selectPostByCondition(PostNumVO postNumVO);
+    List<Post> selectPostByConditionDESC(PostNumVO postNumVO);
 }

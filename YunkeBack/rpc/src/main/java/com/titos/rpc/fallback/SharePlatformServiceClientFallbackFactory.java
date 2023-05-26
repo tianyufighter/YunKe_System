@@ -8,6 +8,7 @@ import com.titos.info.news.vo.NewsVO;
 import com.titos.info.post.model.Post;
 import com.titos.info.post.vo.IdListVO;
 import com.titos.info.post.vo.PostNumVO;
+import com.titos.info.post.vo.PostVO;
 import com.titos.rpc.clients.SharePlatformServiceClient;
 import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ public class SharePlatformServiceClientFallbackFactory implements FallbackFactor
     public SharePlatformServiceClient create(Throwable throwable) {
         return new SharePlatformServiceClient() {
             @Override
-            public CommonResult<PageInfo<Post>> queryPostByCondition(PostNumVO postNumVO) {
+            public CommonResult<PageInfo<PostVO>> queryPostByCondition(PostNumVO postNumVO) {
                 log.error("sentinel-----微服务调用异常");
                 return generalProcess();
             }

@@ -28,13 +28,16 @@
             #{item}
         </foreach>
     </delete>
+    <delete id="deleteCommentByPostId" parameterType="java.lang.Integer">
+        delete from comment where post_id = #{postId}
+    </delete>
 
-    <select id="selectCommentByPostId" resultType="com.titos.shareplatform.dto.CommentDTO">
+    <select id="selectCommentByPostId" resultType="com.titos.info.comment.dto.CommentDTO">
         select <include refid="Base_Column_List"/>
             from comment where post_id = #{postId}
     </select>
 
-    <select id="selectCommentIdByUserId" resultType="Integer">
+    <select id="selectCommentIdByUserId" resultType="java.lang.Integer">
         select id from comment where user_id = #{userId}
     </select>
 

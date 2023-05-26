@@ -60,19 +60,19 @@
                          </foreach>
     </delete>
 
-    <select id="selectAllPostByUserId" resultType="com.titos.shareplatform.vo.PostVO">
+    <select id="selectAllPostByUserId" resultType="com.titos.info.post.vo.PostVO">
         select
             <include refid="Base_Column_List"/>
         from post
         where user_id = #{userId, jdbcType=INTEGER}
     </select>
 
-    <select id="selectAllPost" resultType="com.titos.shareplatform.vo.PostVO">
+    <select id="selectAllPost" resultType="com.titos.info.post.vo.PostVO">
         select <include refid="Base_Column_List"/>
             from post
     </select>
 
-    <select id="selectAllPostByDESC" resultType="com.titos.shareplatform.vo.PostVO">
+    <select id="selectAllPostByDESC" resultType="com.titos.info.post.vo.PostVO">
         select <include refid="Base_Column_List"/>
             from post
             order by create_time desc
@@ -86,7 +86,8 @@
         select create_time
         from post where (create_time between #{startDate} and #{endDate}) and (user_id = #{userId})
     </select>
-    <select id="selectPostByCondition" resultMap="BaseResult">
+    <select id="selectPostByConditionDESC" resultType="com.titos.info.post.model.Post"
+            parameterType="com.titos.info.post.vo.PostNumVO">
         select <include refid="Base_Column_List"/>
         from post
         <where>
@@ -109,11 +110,12 @@
                 AND is_violation = #{isViolation}
             </if>
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-                AND create_time &gt;= #{params.beginTime}
+                AND date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
             </if>
             <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-                AND create_time &lt;= #{params.endTime}
+                AND date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
             </if>
         </where>
+        order by create_time desc
     </select>
 </mapper>

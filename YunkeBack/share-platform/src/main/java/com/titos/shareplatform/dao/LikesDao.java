@@ -24,6 +24,13 @@ public interface LikesDao {
     List<Integer> selectUserIdByPostId(Integer postId);
 
     /**
+     * 动态查询点赞信息
+     * @param likes
+     * @return
+     */
+    List<Likes> selectLikesByCondition(Likes likes);
+
+    /**
      * 根据点赞的id删除点赞信息
      * @param id 点赞的id
      * @return
@@ -37,6 +44,13 @@ public interface LikesDao {
      * @return
      */
     Integer deleteLikesByUserIdAndPostId(@Param("userId") Integer userId, @Param("postId") Integer postId);
+
+    /**
+     * 根据帖子Id删除该帖子所对应的点赞信息
+     * @param postId
+     * @return
+     */
+    Integer deleteLikesByPostId(@Param("postId") Integer postId);
 
     /**
      * 查询用户一个时间段内的点赞量

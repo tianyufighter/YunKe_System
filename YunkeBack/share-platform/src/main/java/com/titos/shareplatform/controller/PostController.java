@@ -5,6 +5,7 @@ import com.titos.info.global.CommonResult;
 import com.titos.info.post.model.Post;
 import com.titos.info.post.vo.IdListVO;
 import com.titos.info.post.vo.PostNumVO;
+import com.titos.info.post.vo.PostVO;
 import com.titos.shareplatform.service.PostService;
 import com.titos.shareplatform.vo.*;
 import com.titos.tool.annotions.InjectToken;
@@ -51,7 +52,7 @@ public class PostController {
      * @return 返回帖子信息
      */
     @PostMapping("/queryPostByPage")
-    public CommonResult<PageInfo<Post>> queryPostByCondition(@RequestBody PostNumVO postNumVO) {
+    public CommonResult<PageInfo<PostVO>> queryPostByCondition(@RequestBody PostNumVO postNumVO) {
         return postService.queryPostByCondition(postNumVO);
     }
 

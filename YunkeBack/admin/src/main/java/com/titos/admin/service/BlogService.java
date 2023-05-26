@@ -12,7 +12,7 @@ public interface BlogService {
      * @param blogVO
      * @return
      */
-    PageInfo<Blog> queryBlogByCondition(BlogVO blogVO);
+    PageInfo<BlogVO> queryBlogByCondition(BlogVO blogVO);
 
     /**
      * 根据博客id更新博客信息

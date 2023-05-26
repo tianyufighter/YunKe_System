@@ -25,6 +25,7 @@ import com.titos.tool.utils.BeanCopyUtils;
 import com.titos.tool.token.CustomStatement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -53,21 +54,18 @@ public class NewsServiceImpl implements NewsService {
         // 分页查询(紧随跟在其后的第一条查询sql将会被分页)
         PageHelper.startPage(pageNum, pageSize);
         List<News> newsList = newsDao.selectNewsByCondition(new ConditionQuery(newsIdList, conditionVO.getStartTime(), conditionVO.getEndTime()));
-        List<NewsVO> newsVOList = new ArrayList<>();
-        newsList.forEach(news -> {
-            NewsVO newsVO = NewsVO.builder()
-                    .id(news.getId())
-                    .newsCover(news.getNewsCover())
-                    .newsTitle(StringUtils.substring(news.getNewsTitle(), 0, 10))
-                    .newsContent(StringUtils.substring(news.getNewsContent(), 0, 50))
-                    .build();
-            //根据newsId获取tagId
-            Integer tagId = newsTagMapDao.selectTagIdByNewsId(news.getId());
+        PageInfo pageInfo = new PageInfo(newsList);
+        List<NewsVO> newsVOList = BeanCopyUtils.copyList(newsList, NewsVO.class);
+        for (NewsVO newsVO : newsVOList) {
+            newsVO.setNewsTitle(StringUtils.substring(newsVO.getNewsTitle(), 0, 10));
+            newsVO.setNewsContent(StringUtils.substring(newsVO.getNewsContent(), 0, 50));
+            // 根据newsId获取tagId
+            Integer tagId = newsTagMapDao.selectTagIdByNewsId(newsVO.getId());
             String tagName = newsTagDao.selectTagNameById(tagId);
             newsVO.setTagName(tagName);
-            newsVOList.add(newsVO);
-        });
-        return CommonResult.success(new PageInfo<>(newsVOList));
+        }
+        pageInfo.setList(newsVOList);
+        return CommonResult.success(pageInfo);
     }
 
     @Override
@@ -208,7 +206,7 @@ public class NewsServiceImpl implements NewsService {
         // 添加新的标签与该新闻的关系
         NewsTagMap newsTagMap = new NewsTagMap();
         newsTagMap.setTagId(newsTagId);
-        newsTagMap.setNewsId(newsVO.getId());
+        newsTagMap.setNewsId(news.getId());
         newsTagMapDao.insertNewsTagMap(newsTagMap);
         return CommonResult.success();
     }

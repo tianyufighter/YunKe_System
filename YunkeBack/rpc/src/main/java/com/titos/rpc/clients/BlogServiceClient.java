@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(value = "technicalArchive", fallbackFactory = BlogServiceClientFallbackFactory.class)
 public interface BlogServiceClient {
     @PostMapping("/technicalArchive/blog/getBlogByCondition")
-    CommonResult<PageInfo<Blog>> getBlogByCondition(@RequestBody BlogVO blogVO);
+    CommonResult<PageInfo<BlogVO>> getBlogByCondition(@RequestBody BlogVO blogVO);
     @PostMapping("/technicalArchive/blog/updateBlog")
     CommonResult updateBlog(@RequestBody Blog blog);
 

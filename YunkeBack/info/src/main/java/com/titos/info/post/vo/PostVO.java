@@ -1,7 +1,7 @@
-package com.titos.shareplatform.vo;
+package com.titos.info.post.vo;
 
+import com.titos.info.comment.dto.CommentDTO;
 import com.titos.info.user.model.User;
-import com.titos.shareplatform.dto.CommentDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -61,7 +61,7 @@ public class PostVO {
     private LocalDateTime createTime;
 
     /**
-     * 发布帖子的用户消息
+     * 发布帖子的用户信息
      */
     private User user;
 

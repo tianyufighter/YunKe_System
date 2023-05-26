@@ -16,7 +16,7 @@ public class BlogServiceClientFallbackFactory implements FallbackFactory<BlogSer
     public BlogServiceClient create(Throwable throwable) {
         return new BlogServiceClient() {
             @Override
-            public CommonResult<PageInfo<Blog>> getBlogByCondition(BlogVO blogVO) {
+            public CommonResult<PageInfo<BlogVO>> getBlogByCondition(BlogVO blogVO) {
                 log.error("sentinel-----微服务调用异常");
                 return generalProcess();
             }

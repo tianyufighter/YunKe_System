@@ -1,4 +1,4 @@
-package com.titos.tool.conf;
+package com.titos.tool.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;

@@ -30,16 +30,16 @@
     </select>
     <select id="selectBlogByUserId" resultMap="BaseResult">
         select <include refid="Base_Column_List"/>
-            from blog where user_id = #{userId}
+            from blog where user_id = #{userId} order by create_time desc
     </select>
     <select id="selectBlogByCategory" resultMap="BaseResult">
         select <include refid="Base_Column_List"/>
-            from blog where category=#{category} and user_id=#{userId}
+            from blog where category=#{category} and user_id=#{userId} order by create_time desc
     </select>
     <select id="selectBlogByPatternAndCategory" resultMap="BaseResult">
         select <include refid="Base_Column_List"/>
             from blog where category=#{category} and (article_title like CONCAT('%', #{pattern}, '%')
-        or  article_text like CONCAT('%', #{pattern}, '%')) and user_id = #{userId}
+        or  article_text like CONCAT('%', #{pattern}, '%')) and user_id = #{userId} order by create_time desc
     </select>
     <select id="selectBlogById" resultMap="BaseResult">
         select <include refid="Base_Column_List"/>
@@ -89,10 +89,10 @@
                 AND status = #{status}
             </if>
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-                AND create_time &gt;= #{params.beginTime}
+                AND date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
             </if>
             <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-                AND create_time &lt;= #{params.endTime}
+                AND date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
             </if>
             <if test="articleText != null and articleText != ''">
                 AND article_text like concat('%', #{articleText}, '%')

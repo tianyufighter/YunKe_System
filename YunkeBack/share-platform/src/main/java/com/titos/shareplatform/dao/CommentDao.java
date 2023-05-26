@@ -1,6 +1,6 @@
 package com.titos.shareplatform.dao;
 
-import com.titos.shareplatform.dto.CommentDTO;
+import com.titos.info.comment.dto.CommentDTO;
 import com.titos.shareplatform.model.Comment;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -30,6 +30,13 @@ public interface CommentDao {
      * @return
      */
     Integer deleteCommentBatchById(Integer[] ids);
+
+    /**
+     * 根据帖子Id删除对应的评论信息
+     * @param postId 帖子id
+     * @return
+     */
+    Integer deleteCommentByPostId(@Param("postId") Integer postId);
 
     /**
      * 根据帖子的id查询该帖子的所有评论

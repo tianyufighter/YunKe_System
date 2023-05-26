@@ -7,9 +7,9 @@ pagehelper:
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.titos.technicalarchive
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    map-underscore-to-camel-case: true
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    map-underscore-to-camel-case: true
 # 指定sentinel-dashboard控制台的连接地址
 spring:
   cloud:

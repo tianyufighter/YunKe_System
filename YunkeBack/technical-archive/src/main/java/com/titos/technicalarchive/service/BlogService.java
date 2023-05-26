@@ -3,8 +3,10 @@ package com.titos.technicalarchive.service;
 import com.github.pagehelper.PageInfo;
 import com.titos.info.blog.model.Blog;
 import com.titos.info.blog.vo.BlogVO;
+import com.titos.info.global.CommonResult;
 import com.titos.info.post.vo.IdListVO;
 import com.titos.technicalarchive.vo.BlogNumVO;
+import com.titos.technicalarchive.vo.BlogStatusVO;
 
 import java.util.List;
 
@@ -67,6 +69,13 @@ public interface BlogService {
      * @return
      */
     Integer updateBlog(Blog blog);
+
+    /**
+     * 更新博客的状态
+     * @param blogStatusVO
+     * @return
+     */
+    CommonResult<Boolean> updateBlogStatus(BlogStatusVO blogStatusVO);
 
     /**
      * 批量删除博客信息(管理员)

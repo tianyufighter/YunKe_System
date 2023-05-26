@@ -7,6 +7,7 @@ import com.titos.info.blog.model.Blog;
 import com.titos.info.post.vo.IdListVO;
 import com.titos.technicalarchive.service.BlogService;
 import com.titos.technicalarchive.vo.BlogNumVO;
+import com.titos.technicalarchive.vo.BlogStatusVO;
 import com.titos.tool.annotions.InjectToken;
 import com.titos.tool.token.CustomStatement;
 import org.springframework.web.bind.annotation.*;
@@ -138,6 +139,16 @@ public class BlogController {
         } else {
             return CommonResult.fail();
         }
+    }
+
+    /**
+     * 更新博客公开状态
+     * @param blogStatusVO 更新的信息
+     * @return 是否更新成功
+     */
+    @PostMapping("/updateBlogStatus")
+    public CommonResult<Boolean> updateBlogStatus(@RequestBody BlogStatusVO blogStatusVO) {
+        return blogService.updateBlogStatus(blogStatusVO);
     }
 
     /**

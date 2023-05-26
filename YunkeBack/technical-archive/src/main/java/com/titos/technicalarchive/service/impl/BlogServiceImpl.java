@@ -4,6 +4,7 @@ import cn.hutool.core.convert.Convert;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.titos.info.blog.vo.BlogVO;
+import com.titos.info.global.CommonResult;
 import com.titos.info.post.vo.IdListVO;
 import com.titos.info.user.model.User;
 import com.titos.rpc.clients.UserServiceClient;
@@ -13,6 +14,7 @@ import com.titos.info.blog.model.Blog;
 import com.titos.technicalarchive.service.BlogService;
 import com.titos.technicalarchive.vo.BlogNumMonth;
 import com.titos.technicalarchive.vo.BlogNumVO;
+import com.titos.technicalarchive.vo.BlogStatusVO;
 import com.titos.tool.utils.BeanCopyUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -132,6 +134,18 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Integer updateBlog(Blog blog) {
         return blogDao.updateBlogById(blog);
+    }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public CommonResult<Boolean> updateBlogStatus(BlogStatusVO blogStatusVO) {
+        blogStatusVO.getIdList().forEach(blogId -> {
+            Blog blog = Blog.builder()
+                    .id(blogId)
+                    .status(blogStatusVO.getBlogStatus())
+                    .build();
+            blogDao.updateBlogById(blog);
+        });
+        return CommonResult.success(Boolean.TRUE);
     }
 
     @Override

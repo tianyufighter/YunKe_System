@@ -85,7 +85,6 @@ public class PersonController {
      */
     @InjectToken
     @PostMapping("/modifyInfo")
-
     public CommonResult<User> modifyUserInfo(CustomStatement customStatement, @RequestBody User user) {
         if (user.getId() == null) {
             user.setId(customStatement.getId());

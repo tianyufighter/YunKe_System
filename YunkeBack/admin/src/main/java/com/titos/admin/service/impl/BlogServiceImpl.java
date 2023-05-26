@@ -17,8 +17,9 @@ public class BlogServiceImpl implements BlogService {
     @Resource
     private BlogServiceClient blogServiceClient;
     @Override
-    public PageInfo<Blog> queryBlogByCondition(BlogVO blogVO) {
-        PageInfo<Blog> pageInfo = Convert.convert(PageInfo.class, blogServiceClient.getBlogByCondition(blogVO).getData());
+    public PageInfo<BlogVO> queryBlogByCondition(BlogVO blogVO) {
+        PageInfo<BlogVO> pageInfo = Convert.convert(PageInfo.class, blogServiceClient.getBlogByCondition(blogVO).getData());
+        System.out.println("返回的博客数据: " + pageInfo);
         return pageInfo;
     }
 

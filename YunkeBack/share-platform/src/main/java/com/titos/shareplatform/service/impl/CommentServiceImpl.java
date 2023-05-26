@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = new Comment();
         comment.setPostId(addCommentVO.getPostId());
         // 过滤敏感词
-        comment.setContent(Convert.convert(String.class, normalServiceClient.replaceContent(addCommentVO.getContent())));
+        comment.setContent(Convert.convert(String.class, normalServiceClient.replaceContent(addCommentVO.getContent()).getData()));
         comment.setUserId(customStatement.getId());
         comment.setCreateTime(addCommentVO.getCreateTime());
         commentDao.insertComment(comment);
