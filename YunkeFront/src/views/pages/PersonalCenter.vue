@@ -18,10 +18,6 @@
                     <small class="text-grey">{{ card.user_meta_1_label }}</small>
                 </span>
                 <span>
-                    <p class="text-xl font-semibold">{{totalReleaseInfoNum}}</p>
-                    <small class="text-grey">{{ card.user_meta_2_label }}</small>
-                </span>
-                <span>
                     <p class="text-xl font-semibold">{{ totalReleaseBlogNum}}</p>
                     <small class="text-grey">{{ card.user_meta_3_label }}</small>
                 </span>
@@ -78,7 +74,7 @@
                           <div class="vx-col sm:w-2/3 w-full">
                             <div style="display: flex;justify-content: left">
                               <span style="margin-right: 1rem">
-                                <datepicker ref="programaticOpen" :language="languages[language]" :value="birthday" format="yyyy-MM-dd"></datepicker>
+                                <datepicker ref="programaticOpen" :language="languages[language]" v-model="birthday" format="yyyy-MM-dd"></datepicker>
                               </span>
                               <vs-button class="mb-4" @click="$refs.programaticOpen.showCalendar()">编辑</vs-button>
                             </div>
@@ -194,7 +190,6 @@
 
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-import { videoPlayer } from 'vue-video-player'
 import 'video.js/dist/video-js.css'
 import Datepicker from 'vuejs-datepicker';
 import * as lang from 'vuejs-datepicker/src/locale';
@@ -208,7 +203,6 @@ export default{
             card: {
                 userImg: '',
                 user_meta_1_label: '帖子量',
-                user_meta_2_label: '信息发布量',
                 user_meta_3_label: '博客量',
             },
 
@@ -219,7 +213,6 @@ export default{
             },
             totalReleaseBlogNum: null,
             totalReleasePostNum: null,
-            totalReleaseInfoNum: null,
             name: '',
             username: '',
             email: '',
@@ -257,7 +250,6 @@ export default{
     },
     components: {
         VuePerfectScrollbar,
-        videoPlayer,
         Datepicker
     },
     // mounted() {
@@ -366,14 +358,6 @@ export default{
     this.$store.commit('TOGGLE_REDUCE_BUTTON', true);
     this.totalReleaseBlogNum = this.$store.state.totalReleaseBlog;
     this.totalReleasePostNum = this.$store.state.totalReleasePost;
-    // 获取总的信息发布量
-    // getInfoNum().then(res => {
-    //   if (res.data.code == 200) {
-    //     this.totalReleaseInfoNum = res.data.data;
-    //   }
-    // }).catch(err => {
-    //   console.log("err = ", err)
-    // })
   },
   created() {
       // 请求用户数据

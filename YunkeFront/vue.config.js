@@ -12,7 +12,6 @@ module.exports = {
         // 真正去请求数据的地址
         target: "http://39.108.117.49:80/api",
         // target: "http://localhost:8010/",
-        // target: "http://162.14.77.43:8010/",
         // 是否跨域
         changeOrigin: true,
         // 重写路径

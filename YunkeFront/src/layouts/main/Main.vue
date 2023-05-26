@@ -5,8 +5,6 @@
 
 <template>
     <div class="layout--main" :class="[navbarClasses, footerClasses, {'app-page': isAppPage}]">
-        <vx-tour :steps="steps" v-if="!disableThemeTour" @end="disableThemeTour = true" />
-
         <the-customizer
             @updateNavbar="updateNavbar"
             @updateNavbarColor="updateNavbarColor"
@@ -68,7 +66,6 @@ import TheFooter from '../components/TheFooter.vue';
 import themeConfig from '@/../themeConfig.js';
 import sidebarItems from "@/layouts/components/vx-sidebar/sidebarItems.js";
 import BackToTop from 'vue-backtotop'
-const VxTour = () => import('@/components/VxTour.vue')
 
 export default {
     data() {
@@ -206,7 +203,6 @@ export default {
         TheFooter,
         TheCustomizer,
         BackToTop,
-        VxTour
     },
     created() {
         this.setSidebarWidth();

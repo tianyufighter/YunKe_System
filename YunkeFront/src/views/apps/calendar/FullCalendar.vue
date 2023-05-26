@@ -6,7 +6,7 @@
 
     <div class="vx-card app-fixed-height">
         <VuePerfectScrollbar class="scroll-area" :settings="settings">
-          <full-calendar v-if="fresh" class="w-full select-none" :events="calendarEvents" locale="zh-cn"  @dayClick ="openAddNewEvent" @eventClick="openEditEvent">
+          <full-calendar v-if="fresh" class="w-full select-none" :events="calendarEvents" lang="zh" @dayClick ="openAddNewEvent" @eventClick="openEditEvent">
               <!-- 左上角标签 -->
               <div slot="fc-header-left" class="flex flex-wrap sm:justify-start justify-center">
                   <div v-for="(label, index) in calendarLabels" :key="index" class="flex items-center mr-4 mb-2">
@@ -51,11 +51,11 @@
             <vs-input name="event-name" v-validate="'required'" class="w-full" label-placeholder="事件标题" v-model="addTitleLocal"></vs-input>
                 <div class="my-4">
                     <small class="date-label">开始日期</small>
-                    <datepicker format="yyyy MM dd" name="start-date" v-model="addStartLocal" :disabled="disabledFrom"></datepicker>
+                    <datepicker :language="languages[language]" format="yyyy MM dd" name="start-date" v-model="addStartLocal" :disabled="disabledFrom"></datepicker>
                 </div>
                 <div class="my-4">
                     <small class="date-label">结束日期</small>
-                    <datepicker format="yyyy MM dd" :disabledDates="disabledDatesToAdd" name="end-date" v-model="addEndLocal"></datepicker>
+                    <datepicker :language="languages[language]" format="yyyy MM dd" :disabledDates="disabledDatesToAdd" name="end-date" v-model="addEndLocal"></datepicker>
                 </div>
             <vs-textarea rows="5" label="添加描述" v-model="addDescLocal" />
 
@@ -94,11 +94,11 @@
             <vs-input name="event-name" v-validate="'required'" class="w-full" label-placeholder="事件标题" v-model="editTitleLocal"></vs-input>
                 <div class="my-4">
                     <small class="date-label">开始日期</small>
-                    <datepicker :disabledDates="disabledDatesFromEdit" format="yyyy-MM-dd" name="start-date" v-model="editStartLocal"></datepicker>
+                    <datepicker :language="languages[language]"  :disabledDates="disabledDatesFromEdit" format="yyyy-MM-dd" name="start-date" v-model="editStartLocal"></datepicker>
                 </div>
                 <div class="my-4">
                     <small class="date-label">结束日期</small>
-                    <datepicker :disabledDates="disabledDatesToEdit" format="yyyy-MM-dd" name="end-date" v-model="editEndLocal"></datepicker>
+                    <datepicker :language="languages[language]"  :disabledDates="disabledDatesToEdit" format="yyyy-MM-dd" name="end-date" v-model="editEndLocal"></datepicker>
                 </div>
             <vs-textarea rows="5" label="描述" v-model="editDescLocal" />
 
@@ -112,12 +112,15 @@
 
 <script>
 import Datepicker from 'vuejs-datepicker';
+import * as lang from 'vuejs-datepicker/src/locale';
 import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 import {doDeleteCalendarEvent, doUpdateCalendarEvent, getAllCalendarEvent} from "../../../network";
 
 export default {
   data() {
       return {
+        languages: lang,
+        language: "zh",
         editEventId: null,
         editLabelLocal: '',
         editTitleLocal: '',
@@ -146,7 +149,7 @@ export default {
           { text: '其它', value: '其它', color: 'primary'},
         ],
         calendarEvents: [],
-        fresh: true
+        fresh: true,
       }
   },
   computed: {

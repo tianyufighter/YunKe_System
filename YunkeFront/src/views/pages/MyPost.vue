@@ -143,6 +143,8 @@ export default {
       this.$vs.dialog({
         type: 'confirm',
         color: 'danger',
+        acceptText: '确认',
+        cancelText: '取消',
         title: `确认`,
         text: '您确定要删除帖子数据吗？',
         accept: this.acceptAlert

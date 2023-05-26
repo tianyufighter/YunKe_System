@@ -107,9 +107,11 @@ const mutations = {
     },
     updateBlogReleaseNum(state, newVal) {
         this.state.totalReleaseBlog = newVal;
+        sessionStorage.setItem("totalReleaseBlog", JSON.stringify(newVal))
     },
     updatePostReleaseNum(state, newVal) {
         this.state.totalReleasePost = newVal;
+        sessionStorage.setItem("totalReleasePost", JSON.stringify(newVal))
     }
 }
 

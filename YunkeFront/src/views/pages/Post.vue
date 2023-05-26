@@ -209,7 +209,6 @@ export default {
   },
   methods: {
     enterChat(post) {
-      console.log("需要添加用户帖子: ", post)
       doAddFriend({
         toId: post.user.id
       }).then(res => {

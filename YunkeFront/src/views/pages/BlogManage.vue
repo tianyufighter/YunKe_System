@@ -148,16 +148,8 @@
 
 <script>
 import AddNewDataSidebar from './AddNewDataSidebar.vue';
-import {getMyBlogByCondition, getMyAllBlog, updateBlog} from "@network/blog";
+import {getMyBlogByCondition, getMyAllBlog, updateBlog, updateBlogStatus, deleteBlogBatch} from "@network/blog";
 import {BModal, BForm, BFormGroup, BFormInput, BFormRadioGroup} from "bootstrap-vue";
-import {
-  doDeleteInfo,
-  doDeleteMultiPosts,
-  doUpdateInfoStatus,
-  getMyReleaseInfo,
-  getPersonalPostByNum,
-  getPostByPage
-} from "../../network";
 
 export default {
   components: {
@@ -174,7 +166,7 @@ export default {
       addNewDataSidebar: false,
       activePrompt:false,
       post: [],
-      val:'发布中',
+      val: 1,
       order_status_choices: [
         {text:'公开',value: 1},
         {text:'私密',value: 0},
@@ -259,19 +251,6 @@ export default {
         }
       }
     },
-    infoStatusNum() {
-      return (val) => {
-        if (val == '发布中'){
-          return 1;
-        } else if (val == '已完成') {
-          return 2;
-        } else if (val == '取消') {
-          return 3;
-        } else {
-          return 0;
-        }
-      }
-    }
   },
   methods: {
     updateBlog() {
@@ -281,7 +260,7 @@ export default {
         category: this.category,
         articleText: this.$refs.md.d_value,
         articleContent: this.$refs.md.d_render,
-        violation: this.blog.violation == 1 ? 2 : null
+        violation: 2
       }
       updateBlog(data).then(res => {
         if (res.data.code == 200) {
@@ -309,17 +288,6 @@ export default {
           title:'错误提示',
           text:'更新博客信息失败!'
         })
-      })
-    },
-    closeSidebar() {
-      // 获取发布的信息
-      getMyReleaseInfo().then(res => {
-        this.addNewDataSidebar = false;
-        this.post = [];
-        for (let i = 0; i < res.data.data.length; i++) {
-          this.post.push(res.data.data[i])
-        }
-      }).catch(err => {
       })
     },
     showBlogDetail(data) {
@@ -367,28 +335,28 @@ export default {
       for (let i = 0; i < this.selected.length; i++) {
         idList.push(this.selected[i].id)
       }
-      doDeleteInfo({
+      deleteBlogBatch({
         idList: idList
       }).then(res => {
         if (res.data.code === 200) {
           this.selected = []
-          getMyReleaseInfo().then(res => {
-            if (res.data.code === 200) {
-              this.post = []
-              for (let i = 0; i < res.data.data.length; i++) {
-                this.post.push(res.data.data[i]);
-              }
-              this.$vs.notify({
-                color: 'danger',
-                title: '删除通知',
-                text: '该条数据已成功删除'
-              })
+          getMyAllBlog().then(res => {
+            if (res.data.code == 200) {
+              this.blogList = res.data.data;
             }
           }).catch(err => {
+            this.$vs.notify({
+              color:'danger',
+              title:'错误提示',
+              text:'查询博客信息失败!'
+            })
+          })
+          this.$vs.notify({
+            color:'success',
+            title:'删除通知',
+            text:'博客数据已成功删除'
           })
         }
-      }).catch(err => {
-        console.log("err1 = ", err)
       })
     },
     clickDelete() {
@@ -402,25 +370,27 @@ export default {
       for (let i = 0; i < this.selected.length; i++) {
         idList.push(this.selected[i].id)
       }
-      doUpdateInfoStatus({
+      updateBlogStatus({
         idList: idList,
-        infoStatus: this.infoStatusNum(this.val)
+        blogStatus: this.val
       }).then(res => {
         if (res.data.code === 200) {
           this.selected = []
-          getMyReleaseInfo().then(res => {
-            if (res.data.code === 200) {
-              this.post = []
-              for (let i = 0; i < res.data.data.length; i++) {
-                this.post.push(res.data.data[i]);
-              }
-              this.$vs.notify({
-                color:'success',
-                title:'通知',
-                text:'消息状态更新成功'
-              })
+          getMyAllBlog().then(res => {
+            if (res.data.code == 200) {
+              this.blogList = res.data.data;
             }
           }).catch(err => {
+            this.$vs.notify({
+              color:'danger',
+              title:'错误提示',
+              text:'查询博客信息失败!'
+            })
+          })
+          this.$vs.notify({
+            color:'success',
+            title:'通知',
+            text:'博客状态更新成功'
           })
         }
       }).catch(err => {

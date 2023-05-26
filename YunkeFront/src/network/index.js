@@ -179,51 +179,6 @@ export function doAddFriend(datas) {
   })
 }
 
-// 分页查询信息
-export function getInfoByNum(datas) {
-  return request({
-    url: '/info/list',
-    method: 'get',
-    params: datas
-  })
-}
-
-// 获取用户发布的信息
-export function getMyReleaseInfo() {
-  return request({
-    url: '/info/list/me',
-    method: 'get',
-  })
-}
-
-// 用户删除发布的信息
-export function doDeleteInfo(datas) {
-  return request({
-    url: '/info/delete',
-    method: 'delete',
-    data: datas
-  })
-}
-
-// 用户发布信息
-export function doReleaseInfo(datas) {
-  return request({
-    url: '/info/add',
-    method: 'post',
-    data: datas
-  })
-}
-
-// 更新用户信息的状态
-export function doUpdateInfoStatus(datas) {
-  return request({
-    url: '/info/update',
-    method: 'post',
-    data: datas
-  })
-}
-
-
 // 编辑博客文章时上传图片
 export function doUploadImage(datas) {
   return request({

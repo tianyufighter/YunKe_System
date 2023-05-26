@@ -82,3 +82,29 @@ export function updateBlog(data) {
         data: data
     })
 }
+
+/**
+ * 更新博客的公开状态
+ * @param data 待更新的信息
+ * @returns {*}
+ */
+export function updateBlogStatus(data) {
+    return request({
+        url: '/technicalArchive/blog/updateBlogStatus',
+        method: 'post',
+        data: data
+    })
+}
+
+/**
+ * 批量删除博客
+ * @param data
+ * @returns {*}
+ */
+export function deleteBlogBatch(data) {
+    return request({
+        url: '/technicalArchive/blog/deleteBlogBatch',
+        method: 'post',
+        data: data
+    })
+}

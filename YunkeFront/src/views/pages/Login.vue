@@ -29,6 +29,7 @@
                       <span class="text-danger text-sm" v-show="errors.has('username')">用户名不能为空</span>
                       <!--密码输入框-->
                       <vs-input
+                          @focus="autoFillPassword"
                           data-vv-validate-on="blur"
                           v-validate="'required|min:1|max:16'"
                           type="password"
@@ -115,13 +116,6 @@ export default {
             }
           },
     },
-    mounted() {
-      let username = this.$cookies.get("username");
-      if (username !== null && this.$cookies.get(username) != null) {
-        this.username = username;
-        this.password = this.$cookies.get(username);
-      }
-    },
     methods: {
         // 刷新验证码
         refresh() {
@@ -146,7 +140,7 @@ export default {
           // 实现记住密码功能
           if (this.checkbox_remember_me === true) {
             // 设置存储3天
-            this.$cookies.set(this.username, this.password, 3);
+            this.$cookies.set(this.username, this.password, '3d');
           }
           // 发送登录请求
           doLogin({
@@ -186,6 +180,11 @@ export default {
         },
         registerUser() {
             this.$router.push('/pages/register');
+        },
+        autoFillPassword() {
+            if (this.username != '' && this.$cookies.get(this.username) != null) {
+              this.password = this.$cookies.get(this.username);
+            }
         }
     }
 }

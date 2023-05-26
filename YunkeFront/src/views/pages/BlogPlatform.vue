@@ -161,19 +161,22 @@ export default {
       }
     },
     currentPageNum(newVal) {
-      this.fetchBlog({
+      let data = {
         pageNum: this.currentPageNum,
         pageSize: this.pageSize,
         isEarliest: this.sortTime == '最早发布' ? true : false,
         articleTitle: this.searchKeyword,
         articleContent: this.searchKeyword,
         status: 1,
-        violation: 0,
         params: {
           beginTime: this.blogStartTime,
           endTime: this.blogEndTime
         }
-      })
+      };
+      if (this.currentItemView == "systemData") {
+        data.violation = 0;
+      }
+      this.fetchBlog(data)
     },
     sortTime: {
       handler(newVal) {
@@ -227,7 +230,6 @@ export default {
       this.fetchMyBlog({
         pageNum: this.currentPageNum,
         pageSize: this.pageSize,
-        violation: 0,
       });
     },
     clickSearch() {
@@ -331,7 +333,7 @@ export default {
       getMyBlogByCondition(data).then(res => {
         if (res.data.code == 200) {
           this.blogList = res.data.data.list;
-          this.totalPage = res.data.data.total;
+          this.totalPage = res.data.data.pages;
         }
       }).catch(err => {
         this.$vs.notify({

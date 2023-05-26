@@ -103,6 +103,7 @@ export default {
         createTime: this.dateFormat(new Date())
       }).then(res => {
         if (res.data.code === 200) {
+          this.$emit('closeSidebar')
           this.title = "";
           this.describe = "";
           this.imgUrl = "";
@@ -111,7 +112,6 @@ export default {
             text: "帖子发布成功",
             color:'success',
             position:'top-center'})
-          this.$emit('closeSidebar')
         }
       }).catch(err => {
         console.log("err = ", err)

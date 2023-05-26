@@ -67,7 +67,7 @@ export default{
     data() {
         return {
           pageNum: 1,
-          pageSize: 2,
+          pageSize: 3,
           noticePageNum: 1, // 通告的当前请求页
           noticePageSize: 2, // 每次请求通告的数量
           openNewsId: 1,
@@ -106,7 +106,7 @@ export default{
         }).then(res => {
           if (res.data.code == 200) {
             this.news = res.data.data.list;
-            this.totalPage = res.data.data.total;
+            this.totalPage = res.data.data.pages;
           }
         }).catch(err => {
           console.error(err)
@@ -154,10 +154,9 @@ export default{
             pageNum: this.pageNum,
             pageSize: this.pageSize
           }).then(res => {
-            console.log("新闻消息: ", res)
             if (res.data.code == 200) {
               this.news = res.data.data.list;
-              this.totalPage = res.data.data.total;
+              this.totalPage = res.data.data.pages;
             }
           }).catch(err => {
             console.error(err)

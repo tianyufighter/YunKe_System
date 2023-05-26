@@ -162,7 +162,7 @@ export default {
                   text: '注册验证链接已成功发送到了你的邮箱，请及时查收',
                   accept: this.acceptAlert
                 })
-                this.$router.push('/');
+                this.$router.push('/pages/login');
               }
             }).catch(err => {
               console.log(err)
