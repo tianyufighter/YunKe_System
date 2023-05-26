@@ -18,4 +18,5 @@ export default new VueI18n({
   locale: 'en',
   fallbackLocale: 'en',
   messages: loadLocaleMessages(),
+  silentTranslationWarn: true, // 去除国际化警告
 })

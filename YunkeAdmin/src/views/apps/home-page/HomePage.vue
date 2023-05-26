@@ -48,7 +48,7 @@
               <li>JWT</li>
               <li>MyBatis</li>
               <li>Druid</li>
-              <li>Fastjson</li>
+              <li>Nacos</li>
             </ul>
           </el-col>
           <el-col :span="6">
@@ -58,7 +58,7 @@
               <li>Vuex</li>
               <li>Element-ui</li>
               <li>Axios</li>
-              <li>Sass</li>
+              <li>Vue-cookies</li>
             </ul>
           </el-col>
         </el-row>

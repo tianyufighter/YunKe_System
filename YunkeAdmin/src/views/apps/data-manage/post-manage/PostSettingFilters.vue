@@ -128,7 +128,11 @@ export default {
       this.$emit('clickReset')
     },
     submitData() {
-      this.$emit('clickSearch', this.title, this.content, this.isViolation);
+      this.$emit('clickSearch', {
+        title: this.title,
+        content: this.content,
+        isViolation: this.isViolation
+      });
     }
   }
 }

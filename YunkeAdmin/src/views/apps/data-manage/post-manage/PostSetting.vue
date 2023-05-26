@@ -5,7 +5,7 @@
     <!-- 筛选用户 -->
     <post-setting-filters
       :status-options="statusOptions"
-      @clickSearch="fetchConfigByCondition"
+      @clickSearch="getPostByCondition"
       @clickReset="refetchPostList"
     />
 
@@ -108,6 +108,10 @@
           >
             {{ data.item.isViolation == true ? '违规' : '正常' }}
           </b-badge>
+        </template>
+        <!--Column: 用户名-->
+        <template #cell(username)="data">
+          <span>{{data.item.user.username}}</span>
         </template>
         <!-- Column: 操作 -->
         <template #cell(actions)="data">
@@ -240,7 +244,7 @@ export default {
         { key: 'postCover', label: '帖子图片', formatter: title, sortable: true, },
         { key: 'createTime', label: '发布时间' },
         { key: 'isViolation', label: '状态' },
-        { key: 'userId', label: '用户id' },
+        { key: 'username', label: '用户名' },
         { key: 'actions', label: '操作' },
       ],
       perPage: 5, // 每页显示的条数
@@ -277,6 +281,33 @@ export default {
     }
   },
   methods: {
+    getPostByCondition(data) {
+      this.currentPage = 1;
+      this.perPage = 5;
+      getPost({
+        pageNum: this.currentPage,
+        pageSize: this.perPage,
+        title: data.title,
+        content: data.content,
+        isViolation: data.isViolation
+      }).then(res => {
+        if (res.data.code == 200) {
+          this.postList = res.data.data.list;
+          this.totalPost = res.data.data.total;
+          this.postList.forEach(post => {
+            this.$set(this.isCheckedObj, 'index' + post.id, false);
+          })
+        } else {
+          Promise.reject(res);
+        }
+      }).catch(err => {
+        this.$vs.notify({
+          title:'错误提示',
+          text:'参数信息查询失败',
+          color:'danger',
+          position:'top-center'})
+      })
+    },
     deletePost(data) {
       if (data != null) {
         this.idArr.push(data.id);
@@ -392,26 +423,7 @@ export default {
   },
   mounted() {
     this.isCheckedObj = {};
-    getPost({
-      pageNum: this.currentPage,
-      pageSize: this.perPage
-    }).then(res => {
-      if (res.data.code == 200) {
-        this.postList = res.data.data.list;
-        this.totalPost = res.data.data.total;
-        this.postList.forEach(post => {
-          this.$set(this.isCheckedObj, 'index' + post.id, false);
-        })
-      } else {
-        Promise.reject(res);
-      }
-    }).catch(err => {
-      this.$vs.notify({
-        title:'错误提示',
-        text:'参数信息查询失败',
-        color:'danger',
-        position:'top-center'})
-    })
+    this.refetchPostList();
   },
   watch: {
     currentPage() {

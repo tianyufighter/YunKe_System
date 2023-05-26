@@ -344,7 +344,7 @@ export default {
         { key: 'createTime', label: '发布时间' },
         { key: 'status', label: '状态'},
         { key: 'violation', label: '是否合规' },
-        { key: 'userId', label: '用户id' },
+        { key: 'username', label: '用户名' },
         { key: 'actions', label: '操作' },
       ],
       perPage: 5, // 每页显示的条数

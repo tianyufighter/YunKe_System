@@ -93,6 +93,7 @@
                   >
                     <b-form-input
                       id="login-password"
+                      @focus="autoFillPassword"
                       v-model="password"
                       :state="errors.length > 0 ? false:null"
                       class="form-control-merge"
@@ -204,13 +205,6 @@ export default {
       return this.sideImg
     },
   },
-  mounted() {
-    let userEmail = this.$cookies.get("userEmail");
-    if (userEmail !== null && this.$cookies.get(userEmail) != null) {
-      this.userEmail = userEmail;
-      this.password = this.$cookies.get(userEmail);
-    }
-  },
   methods: {
     login() {
       this.$refs.loginForm.validate().then(success => {
@@ -219,7 +213,6 @@ export default {
           if (this.status === true) {
             // 设置存储3天
             this.$cookies.set(this.userEmail, this.password, '3d');
-            this.$cookies.set("userEmail", this.userEmail, '3d');
           }
           loginSystem({
             email: this.userEmail,
@@ -279,6 +272,11 @@ export default {
       } else {
         return '超级管理员'
       }
+    },
+    autoFillPassword() {
+        if (this.userEmail != '' && this.$cookies.get(this.userEmail) != null) {
+          this.password = this.$cookies.get(this.userEmail);
+        }
     }
   },
 }

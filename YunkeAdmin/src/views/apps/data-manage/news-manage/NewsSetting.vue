@@ -201,7 +201,7 @@
         ref="modal-select2"
         size="lg"
         title="新闻信息"
-        ok-title="更改"
+        :ok-title="this.id == null ? '发布' : '更改'"
         cancel-title="取消"
         cancel-variant="outline-secondary"
         @cancel=""
@@ -297,13 +297,12 @@ import {
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import NewsSettingFilters from '@/views/apps/data-manage/news-manage/NewsSettingFilters.vue'
-import NewsSettingAddNew from '@/views/apps/data-manage/news-manage/NewsSettingAddNew.vue'
 import Ripple from 'vue-ripple-directive'
 import {getNews, deleteNews, updateNews, doUploadImage, addNews} from '@/network/newsmanage'
 
 export default {
   components: {
-    NewsSettingFilters, NewsSettingAddNew, BFormRadioGroup, BFormTextarea, BFormGroup, BFormCheckbox, BForm, BCard, BRow,
+    NewsSettingFilters, BFormRadioGroup, BFormTextarea, BFormGroup, BFormCheckbox, BForm, BCard, BRow,
     BCol, BFormInput, BButton, BTable, BMedia, BAvatar, BLink, BBadge, BDropdown, BDropdownItem, BPagination, BMediaAside,
     BImg,BMediaBody,BCardText, BFormFile, vSelect,
   },
@@ -480,7 +479,6 @@ export default {
         pageNum: this.currentPage,
         pageSize: this.perPage
       }).then(res => {
-        console.log("新闻信息: ", res)
         this.newsList = res.data.data.list;
         this.totalNews = res.data.data.total;
       }).catch(err => {
@@ -596,7 +594,6 @@ export default {
   },
   mounted() {
     this.isCheckedObj = {};
-    // this.refetchBlogList();
     this.refetchNewsList();
   },
   watch: {

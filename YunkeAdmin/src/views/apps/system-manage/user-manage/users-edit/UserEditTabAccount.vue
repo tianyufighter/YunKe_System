@@ -280,9 +280,9 @@ export default {
       email: this.userData.email,
       personType: this.getPersonValue(this.userData.personType),
       headImage: this.userData.headImage,
-      birthday: this.dateFormat(this.userData.birthday),
+      birthday: this.simplyTime(this.userData.birthday),
       phone: this.userData.phone,
-      registryTime: this.dateFormat(this.userData.registryTime),
+      registryTime: this.simplyTime(this.userData.registryTime),
       jobTitle: this.userData.jobTitle,
       description: this.userData.description,
       isBan: this.userData.isBan == true ? 'ban' : 'normal',
@@ -329,9 +329,9 @@ export default {
         email: this.email,
         personType: this.getPerson(this.personType),
         headImage: this.headImage,
-        birthday: this.birthday,
+        birthday: this.dateFormat(this.birthday),
         phone: this.phone,
-        registryTime: this.registryTime,
+        registryTime: this.dateFormat(this.registryTime),
         jobTitle: this.jobTitle,
         description: this.description,
         isBan: this.isBan == 'ban' ? true : false
@@ -380,8 +380,8 @@ export default {
 
       return isJPG && isLt2M;
     },
-    //时间格式化函数，此处仅针对yyyy-MM-dd hh:mm:ss 的格式进行格式化
-    dateFormat(time) {
+    // 简化时间
+    simplyTime(time) {
       let date=new Date(time);
       let year=date.getFullYear();
       /* 在日期格式中，月份是从0开始的，因此要加0
@@ -391,6 +391,21 @@ export default {
       let day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
       // 拼接
       return year+"-"+month+"-"+day;
+    },
+    //时间格式化函数，此处仅针对yyyy-MM-dd hh:mm:ss 的格式进行格式化
+    dateFormat(time) {
+      let date=new Date(time);
+      let year=date.getFullYear();
+      /* 在日期格式中，月份是从0开始的，因此要加0
+       * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+       * */
+      let month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+      let day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
+      let hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
+      let minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
+      let seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
+      // 拼接
+      return year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
     },
     // 获取性别在数据库中对应的码
     getGender(genderName) {
