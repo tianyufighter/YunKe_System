@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="normal" />
+        <module name="share-platform" />
+        <module name="rpc" />
+        <module name="admin" />
+        <module name="user-service" />
+        <module name="tool" />
+        <module name="userService" />
+        <module name="technical-archive" />
+        <module name="person-management" />
+        <module name="admin-server" />
+        <module name="gateway" />
+        <module name="conversation" />
+        <module name="info" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="consumer" target="1.8" />
+      <module name="provider" target="1.8" />
+      <module name="Test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Test" options="-parameters" />
+      <module name="YunkeBack" options="" />
+      <module name="admin" options="-parameters" />
+      <module name="admin-server" options="-parameters" />
+      <module name="consumer" options="-parameters" />
+      <module name="conversation" options="-parameters" />
+      <module name="gateway" options="-parameters" />
+      <module name="info" options="-parameters" />
+      <module name="normal" options="-parameters" />
+      <module name="person-management" options="-parameters" />
+      <module name="provider" options="-parameters" />
+      <module name="rpc" options="-parameters" />
+      <module name="share-platform" options="-parameters" />
+      <module name="technical-archive" options="-parameters" />
+      <module name="tool" options="-parameters" />
+      <module name="user-service" options="-parameters" />
+    </option>
+  </component>
+</project>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" native2AsciiForPropertiesFiles="true">
+    <file url="file://$PROJECT_DIR$/Test/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/admin-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/admin/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/admin/src/main/resources/application.yaml" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/consumer/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/conversation/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/info/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/info/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/normal/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/normal/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/person-management/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/person-management/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/provider/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rpc/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/share-platform/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/technical-archive/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tool/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tool/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/user-service/src/main/java" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>
