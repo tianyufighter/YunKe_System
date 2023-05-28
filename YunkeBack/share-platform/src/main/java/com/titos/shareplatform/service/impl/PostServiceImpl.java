@@ -153,7 +153,6 @@ public class PostServiceImpl implements PostService {
         return CommonResult.success(activeVOList);
     }
 
-    @Async
     @Override
     public void addPost(CustomStatement customStatement, AddPostVO addPostVO) {
         // 过滤敏感词

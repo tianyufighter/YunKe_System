@@ -6,10 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 /**
- * @Author: ddgo
- * @DateTime: 2022/4/7 22:30
- * @Version: 1.0.0
- * @Description:
+ * @author Titos
  */
 @Configuration
 @ConditionalOnWebApplication

@@ -10,10 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @Author: ddgo
- * @DateTime: 2022/4/8 13:34
- * @Version: 1.0.0
- * @Description:
+ * @author Titos
  */
 @WebFilter(filterName = "WebsocketFilter", urlPatterns = "/conversation/chat/*")
 public class WebsocketFilter implements Filter {

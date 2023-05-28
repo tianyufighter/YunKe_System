@@ -2,11 +2,6 @@ package com.titos.tool.annotions;
 
 import java.lang.annotation.*;
 
-/**
- * @author Jirath
- * @date 2020/10/4
- * @description:
- */
 @Documented
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

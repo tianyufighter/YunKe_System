@@ -8,10 +8,7 @@ import org.springframework.context.ApplicationContextAware;
 import javax.websocket.server.ServerEndpointConfig;
 
 /**
- * @Author: ddgo
- * @DateTime: 2022/4/8 12:49
- * @Version: 1.0.0
- * @Description:
+ * @author Titos
  */
 public class CustomSpringConfigurator extends ServerEndpointConfig.Configurator implements ApplicationContextAware {
 
