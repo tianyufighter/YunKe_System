@@ -95,6 +95,7 @@ export default{
       friend: {
         // 好友id发生变化就会调用这个函数
         handler(friend) {
+          this.chatData = null
           // 请求所有的历史信息
           getAllChatMessage({
             toId: friend.friendId
