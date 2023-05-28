@@ -25,7 +25,7 @@
         </b-col>
         <b-col
           cols="12"
-          md="4"
+          md="3"
           class="mb-md-0 mb-2"
         >
           <label>状态</label>
@@ -38,7 +38,7 @@
         </b-col>
         <b-col
           clos="12"
-          md="1"
+          md="2"
           class="mb-md-0 mb-2 right"
         >
           <b-form-group
