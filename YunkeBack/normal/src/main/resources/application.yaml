@@ -1,5 +1,0 @@
-server:
-  port: 8003
-mybatis:
-  mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.titos.normal
