@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.titos.shareplatform.dao.CalendarDao">
+    <resultMap id="BaseResult" type="com.titos.shareplatform.model.Calendar">
+        <id column="id" property="id" jdbcType="NUMERIC"/>
+        <result column="calendar_title" property="calendarTitle" jdbcType="VARCHAR"/>
+        <result column="calendar_desc" property="calendarDesc" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, calendar_title, calendar_desc, user_id, start_time, end_time, create_time
+    </sql>
+    <select id="selectCalendarsByUserId" resultMap="BaseResult">
+        select <include refid="Base_Column_List"/> from calendar where user_id = #{userId}
+    </select>
+    <insert id="insertCalendar" useGeneratedKeys="true" keyProperty="id">
+        insert into calendar(calendar_title, calendar_desc, user_id, start_time, end_time, create_time)
+        values(#{calendarTitle}, #{calendarDesc}, #{userId}, #{startTime}, #{endTime}, #{createTime});
+    </insert>
+    <update id="updateCalendarById">
+        update calendar
+        <set>
+            <if test="calendarTitle != null">
+                calendar_title = #{calendarTitle}
+            </if>
+            <if test="calendarDesc != null">
+                calendar_desc = #{calendarDesc}
+            </if>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime}
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime}
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="selectIdByUserId" resultType="Integer">
+        select id from calendar where user_id = #{userId}
+    </select>
+    <delete id="deleteCalendarByIdBatch">
+        delete from calendar where id in
+        <foreach collection="ids" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

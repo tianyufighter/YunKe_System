@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.titos.admin.dao.NoticeDao">
+    <resultMap id="NoticeResult" type="com.titos.admin.model.Notice">
+        <id column="id" property="id"/>
+        <result column="notice_content" property="noticeContent"/>
+        <result column="create_time" property="createTime"/>
+        <result column="status" property="status"/>
+        <result column="user_id" property="userId"/>
+    </resultMap>
+
+    <sql id="selectNoticeVo">
+        select id, notice_content, create_time, status, user_id  from notice
+    </sql>
+
+    <select id="selectNoticeById" resultMap="NoticeResult">
+        <include refid="selectNoticeVo"/>
+        where id = #{noticeId}
+    </select>
+
+    <select id="selectNoticeList" resultMap="NoticeResult">
+        <include refid="selectNoticeVo"/>
+        <where>
+            <if test="noticeContent != null and noticeContent != ''">
+                AND notice_content like concat('%', #{noticeContent}, '%')
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertNotice">
+        insert into notice (
+        <if test="noticeContent != null and noticeContent != '' ">notice_content, </if>
+        <if test="status != null">status, </if>
+        <if test="userId != null">user_id,</if>
+        create_time
+        )values(
+        <if test="noticeContent != null and noticeContent != ''">#{noticeContent}, </if>
+        <if test="status != null">#{status}, </if>
+        <if test="userId != null">#{userId},</if>
+        sysdate()
+        )
+    </insert>
+
+    <update id="updateNotice">
+        update notice
+        <set>
+            <if test="noticeContent != null">notice_content = #{noticeContent}, </if>
+            <if test="status != null">status = #{status}, </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteNoticeById">
+        delete from notice where id = #{noticeId}
+    </delete>
+</mapper>
