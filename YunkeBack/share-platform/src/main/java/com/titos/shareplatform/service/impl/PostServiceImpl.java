@@ -14,7 +14,6 @@ import com.titos.info.post.vo.PostVO;
 import com.titos.info.user.model.User;
 import com.titos.rpc.clients.NormalServiceClient;
 import com.titos.rpc.clients.UserServiceClient;
-import com.titos.shareplatform.async.ServiceAsync;
 import com.titos.shareplatform.dao.CommentDao;
 import com.titos.shareplatform.dao.LikesDao;
 import com.titos.shareplatform.dao.PostDao;
@@ -57,9 +56,6 @@ public class PostServiceImpl implements PostService {
 
     @Resource
     private NormalServiceClient normalServiceClient;
-
-    @Resource
-    private ServiceAsync serviceAsync;
 
 //    @Override
 //    public PageInfo<Post> queryPostsByPage(int pageNum, int pageSize) {
@@ -179,9 +175,7 @@ public class PostServiceImpl implements PostService {
                 return new CommonResult<>(StatusEnum.FAIL_DEL.getCode(), StatusEnum.FAIL_DEL.getMsg());
             }
         }
-        postDao.deletePostBatchById(postIdListVO.getIdList());
-        // 删除帖子时，存储的排行榜中的score(即该用户发表的帖子数量)减1
-        serviceAsync.subActiveScore(customStatement);
+        deletePostBatch(postIdListVO);
         log.info("删除帖子完成");
         return CommonResult.success(Boolean.TRUE);
     }
