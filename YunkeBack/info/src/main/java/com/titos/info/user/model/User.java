@@ -51,6 +51,7 @@ public class User {
     /**
      * 出生日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date birthday;
     /**
      * 电话号码
@@ -59,6 +60,7 @@ public class User {
     /**
      * 注册时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date registryTime;
     /**
      * 职位
