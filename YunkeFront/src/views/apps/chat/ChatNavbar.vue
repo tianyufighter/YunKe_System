@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import contacts from './contacts'
 
 export default{
     props: {
@@ -23,49 +22,10 @@ export default{
             type: Object,
             required: true,
         },
-        isPinnedProp: {
-            type: Boolean,
-            required: true,
-        },
         isSidebarCollapsed: {
             type: Boolean,
             required: true,
         }
-    },
-    data() {
-        return {
-            contacts: contacts,
-            isPinnedLocal: this.isPinnedProp,
-        }
-    },
-    watch: {
-        isPinnedProp(val) {
-            this.isPinnedLocal = val;
-        }
-    },
-    computed: {
-        contactIndex() {
-            return contacts.findIndex(contact => contact.id == this.userId);
-        },
-        userImg() {
-            if(this.contactIndex === -1) {
-                return this.$store.state.AppActiveUser.img;
-            }else{
-                return this.contacts[this.contactIndex].img;
-            }
-        },
-        contactName() {
-            if(this.contactIndex === -1) {
-                return this.$store.state.AppActiveUser.name;
-            }else{
-                return this.contacts[this.contactIndex].name;
-            }
-        },
-    },
-    methods: {
-        getUserStatus(isActiveUser) {
-            return (isActiveUser) ? this.$store.state.AppActiveUser.status : this.contacts[this.contactIndex].status;
-        },
     }
 }
 </script>

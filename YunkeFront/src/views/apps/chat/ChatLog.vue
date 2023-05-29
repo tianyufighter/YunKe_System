@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import contacts from './contacts'
 import {getAllChatMessage} from "../../../network";
 
 export default{
@@ -52,7 +51,6 @@ export default{
     },
     data() {
         return {
-            contacts: contacts,
             chatData: [], // 聊天信息
             userId: '', // 当前登录用户的id
         }
@@ -100,7 +98,6 @@ export default{
           getAllChatMessage({
             toId: friend.friendId
           }).then(res => {
-            console.log("所有的聊天信息: ", res)
             this.chatData = []
             for (let i = 0; i < res.data.data.length; i++) {
               this.chatData.push(res.data.data[i]);

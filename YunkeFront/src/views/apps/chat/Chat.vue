@@ -44,7 +44,7 @@
         <div class="chat__bg app-fixed-height chat-content-area border border-solid d-theme-border-grey-light border-t-0 border-r-0 border-b-0" :class="{'sidebar-spacer--wide': clickNotClose, 'flex items-center justify-center': activeChatUser === null}">
             <template v-if="activeChatUser">
                 <div class="chat__navbar">
-                    <chat-navbar :isSidebarCollapsed="!clickNotClose" :friend="activeChatUser" :isPinnedProp="isChatPinned" @openContactsSidebar="toggleChatSidebar(true)" @showProfileSidebar="updateUserProfileId" @toggleIsChatPinned="toggleIsChatPinned"></chat-navbar>
+                    <chat-navbar :isSidebarCollapsed="!clickNotClose" :friend="activeChatUser" @openContactsSidebar="toggleChatSidebar(true)" @showProfileSidebar="updateUserProfileId"></chat-navbar>
                 </div>
                 <VuePerfectScrollbar class="chat-content-scroll-area border border-solid d-theme-border-grey-light" :settings="settings" ref="chatLogPS">
                     <div class="chat__log" ref="chatLog">
@@ -70,7 +70,6 @@
 
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-import contacts from './contacts'
 import ChatContact from "./ChatContact.vue"
 import ChatNavbar from './ChatNavbar.vue'
 import ChatLog from './ChatLog.vue'
@@ -103,14 +102,12 @@ export default{
           websocket: null,
           active: true,
           isHidden: false,
-          contacts: contacts,
           searchContact: "",
           activeProfileSidebar: false,
           activeChatUser: null, // 正在聊天的好友id
           userProfileId: -1,
           typedMessage: "", // 输入框的聊天信息
           isShowEmoji: false,
-          isChatPinned: false,
           settings: {
               maxScrollbarLength: 60,
               wheelSpeed: 0.70,
@@ -230,9 +227,6 @@ export default{
         let seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
         // 拼接
         return year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
-      },
-      toggleIsChatPinned(value) {
-          this.isChatPinned = value;
       },
       handleWindowResize(event) {
           this.windowWidth = event.currentTarget.innerWidth;
@@ -363,7 +357,6 @@ export default{
       this.initWebSocket()
       // 获取个人好友列表
       getAllContactPerson().then(res => {
-        console.log("好友信息: ", res)
         this.friendList = [];
         if (res.data.code === 200) {
           for (let i = 0; i < res.data.data.length; i++) {

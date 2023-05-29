@@ -10,19 +10,17 @@
     <vs-divider class="mb-0"></vs-divider>
 
     <VuePerfectScrollbar class="scroll-area--data-list-add-new pt-4 pb-6" :settings="settings">
-
       <div class="p-6">
         <!-- 标题 -->
         <vs-input label="标题" name="name" v-model="title" class="mt-5 w-full" />
         <!-- 描述信息 -->
         <vs-textarea label="描述信息" name="price" v-model="describe" class="mt-5 w-full" />
 
-        <!-- IMG -->
-<!--        <vs-upload text="Upload Image" class="img-upload" ref="fileUpload" limit="1" action="/api/file/upload" singleUpload="true"/>-->
         <!--图片上传-->
         <el-upload
             class="upload-demo"
             drag
+            ref="imgUpload"
             action="/api/common/file/upload"
             :limit="1"
             :multiple="false"
@@ -88,11 +86,9 @@ export default {
         color:'warning'})
     },
     initValues() {
-      this.name = '';
-      this.category = 'audio';
-      this.order_status = 'pending';
-      this.price = '';
-      this.$refs.fileUpload.srcs = [];
+      this.title = ''
+      this.describe = ''
+      this.imgUrl = ''
     },
     // 发布帖子
     releasePost() {
@@ -103,6 +99,7 @@ export default {
         createTime: this.dateFormat(new Date())
       }).then(res => {
         if (res.data.code === 200) {
+          this.$refs.imgUpload.clearFiles();
           this.$emit('closeSidebar')
           this.title = "";
           this.describe = "";

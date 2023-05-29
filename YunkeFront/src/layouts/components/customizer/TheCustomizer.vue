@@ -193,7 +193,6 @@ export default {
         reduced_sidebar: {
             get() { return this.$store.state.reduceButton },
             set(val) {
-              console.log("设置了该值: ", val)
               this.$store.commit('TOGGLE_REDUCE_BUTTON', val);
               localStorage.setItem("reduced_sidebar", val);
             }
