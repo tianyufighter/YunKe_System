@@ -6,6 +6,8 @@ import com.titos.info.global.CommonResult;
 import com.titos.technicalarchive.model.BlogComment;
 import com.titos.technicalarchive.service.BlogCommentService;
 import com.titos.technicalarchive.vo.BlogCommentVO;
+import com.titos.tool.annotions.InjectToken;
+import com.titos.tool.token.CustomStatement;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +30,8 @@ public class BlogCommentController {
      * @return
      */
     @PostMapping("/getBlogComment")
-    public CommonResult<PageInfo<BlogComment>> queryBlogComment(@RequestBody BlogCommentVO blogCommentVO) {
-        PageInfo<BlogComment> pageInfo = blogCommentService.queryBlogCommentByCondition(blogCommentVO);
+    public CommonResult<PageInfo<BlogCommentVO>> queryBlogComment(@RequestBody BlogCommentVO blogCommentVO) {
+        PageInfo<BlogCommentVO> pageInfo = blogCommentService.queryBlogCommentByCondition(blogCommentVO);
         return CommonResult.success(pageInfo);
     }
 
@@ -37,8 +39,10 @@ public class BlogCommentController {
      * 新增一条博客的评论
      * @return
      */
+    @InjectToken
     @PostMapping("/addBlogComment")
-    public CommonResult addBlogComment(@RequestBody BlogComment blogComment) {
+    public CommonResult addBlogComment(CustomStatement customStatement, @RequestBody BlogComment blogComment) {
+        blogComment.setUserId(customStatement.getId());
         Integer res = blogCommentService.addBlogComment(blogComment);
         if (res == 1) {
             return CommonResult.success();

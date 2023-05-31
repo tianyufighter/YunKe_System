@@ -1,6 +1,7 @@
 package com.titos.technicalarchive.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.titos.info.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +32,10 @@ public class BlogCommentVO {
      * 用户id
      */
     private Integer userId;
+    /**
+     * 用户信息
+     */
+    private User user;
     /**
      * 博客id
      */

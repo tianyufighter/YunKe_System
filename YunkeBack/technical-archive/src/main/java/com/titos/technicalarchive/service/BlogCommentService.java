@@ -19,5 +19,5 @@ public interface BlogCommentService {
      * @param blogCommentVO
      * @return
      */
-    PageInfo<BlogComment> queryBlogCommentByCondition(BlogCommentVO blogCommentVO);
+    PageInfo<BlogCommentVO> queryBlogCommentByCondition(BlogCommentVO blogCommentVO);
 }
