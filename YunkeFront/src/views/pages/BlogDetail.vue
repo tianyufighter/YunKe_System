@@ -39,9 +39,9 @@
                 <div class="comments-container mt-4">
                   <ul class="user-comments-list">
                     <li class="commented-user flex items-center mb-4" v-for="comment in commentList" :key="comment.id">
-                      <div class="mr-3"><vs-avatar class="m-0" src="https://tianyufighter.oss-cn-chengdu.aliyuncs.com/images/2023/03/08/f8f19c15-01ed-47cd-95d6-47193528d1d3.jpg" size="30px" /></div>
+                      <div class="mr-3"><vs-avatar color="primary" :text="comment.user.username && comment.user.username.length > 2 ? comment.user.username.substr(0, 2) : comment.user.username" class="m-0" :src="comment.user.headImage" size="30px" /></div>
                       <div class="leading-tight">
-                        <p class="font-medium">Titos</p>
+                        <p class="font-medium">{{comment.user.username}}</p>
                         <span class="text-xs">{{ comment.content }}</span>
                       </div>
                       <div class="ml-auto">
@@ -115,7 +115,6 @@ export default{
             position:'top-center'})
         } else {
           releaseBlogComment({
-            userId: 2,
             blogId: this.blog.id,
             content: this.commentContent,
           }).then(res => {
@@ -195,6 +194,7 @@ export default{
         }).then(res => {
           this.totalComment = res.data.data.total;
           this.commentList = res.data.data.list;
+          console.log("博客评论: ", res)
         }).catch(err => {
           this.$vs.notify({
             title:'错误提示',
