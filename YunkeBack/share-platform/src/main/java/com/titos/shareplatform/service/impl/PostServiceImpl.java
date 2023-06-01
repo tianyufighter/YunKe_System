@@ -190,6 +190,9 @@ public class PostServiceImpl implements PostService {
             redisTemplate.opsForSet().remove(CacheConstants.LIKE_PREFIX + postId, userId);
             redisTemplate.opsForZSet().incrementScore(CacheConstants.LIKE_COUNT, postId, -1D);
             likesDao.deleteLikesByUserIdAndPostId(userId, postId);
+            Post post = postDao.selectPostByPostId(postId);
+            post.setComments(post.getLikes() - 1);
+            postDao.updatePostByIdDynamic(post);
         } else {
             // 若未点赞则点赞，并对对应的帖子的点赞量+1
             redisTemplate.opsForSet().add(CacheConstants.LIKE_PREFIX + postId, userId);
@@ -198,6 +201,9 @@ public class PostServiceImpl implements PostService {
                     .userId(userId)
                     .postId(postId)
                     .build());
+            Post post = postDao.selectPostByPostId(postId);
+            post.setComments(post.getLikes() + 1);
+            postDao.updatePostByIdDynamic(post);
         }
     }
 
